@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Study Buddy – Flashcard App</title>
+  <title>Study Buddy – Solar System Study Suite</title>
   <style>
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
@@ -33,13 +33,53 @@
       font-size: 0.95rem;
     }
 
+    .mode-switch {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .mode-button {
+      border-radius: 999px;
+      border: 1px solid #374151;
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      background: #111827;
+      color: #e5e7eb;
+      transition: background 0.15s ease, transform 0.1s ease,
+        box-shadow 0.1s ease, border-color 0.1s ease;
+    }
+
+    .mode-button.mode-active {
+      background: #4f46e5;
+      border-color: #6366f1;
+      box-shadow: 0 8px 24px rgba(79, 70, 229, 0.35);
+    }
+
+    .mode-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
+    }
+
+    .mode {
+      width: 100%;
+      max-width: 780px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
     .card {
       background: #111827;
       border-radius: 18px;
       padding: 24px 28px;
       max-width: 640px;
       box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
-      margin: 16px 0;
+      margin: 16px auto;
       cursor: pointer;
       transition: transform 0.15s ease, box-shadow 0.15s ease,
         background 0.15s ease;
@@ -137,12 +177,111 @@
       text-align: center;
     }
 
+    /* Matching mode */
+
+    .matching-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+    }
+
+    .matching-term {
+      flex: 0 0 40%;
+      padding: 6px 10px;
+      background: #020617;
+      border-radius: 10px;
+      border: 1px solid #111827;
+    }
+
+    .matching-select {
+      flex: 1;
+      padding: 6px 8px;
+      border-radius: 999px;
+      border: 1px solid #374151;
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 0.85rem;
+    }
+
+    .matching-select.correct {
+      border-color: #22c55e;
+      box-shadow: 0 0 0 1px #22c55e;
+    }
+
+    .matching-select.incorrect {
+      border-color: #ef4444;
+      box-shadow: 0 0 0 1px #ef4444;
+    }
+
+    /* Quiz mode */
+
+    .quiz-card {
+      background: #111827;
+      border-radius: 18px;
+      padding: 22px 24px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+      border: 1px solid #1f2937;
+      margin: 16px auto;
+      max-width: 640px;
+    }
+
+    .quiz-question-label {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.7rem;
+      color: #f97316;
+      margin-bottom: 6px;
+    }
+
+    .quiz-question-text {
+      font-size: 1rem;
+      line-height: 1.4;
+      margin-bottom: 14px;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .quiz-option {
+      text-align: left;
+      width: 100%;
+    }
+
+    .quiz-option.correct {
+      background: #14532d;
+      border-color: #22c55e;
+    }
+
+    .quiz-option.incorrect {
+      background: #7f1d1d;
+      border-color: #ef4444;
+    }
+
+    .quiz-feedback {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .quiz-feedback.correct {
+      color: #4ade80;
+    }
+
+    .quiz-feedback.incorrect {
+      color: #fca5a5;
+    }
+
     @media (max-width: 600px) {
       body {
         padding: 16px;
       }
 
-      .card {
+      .card,
+      .quiz-card {
         padding: 18px 20px;
       }
     }
@@ -151,31 +290,77 @@
 <body>
   <h1>Study Buddy</h1>
   <p class="subtitle">
-    Click the card to flip. Use the buttons to track what you know.
+    Flashcards, matching, and quizzes for your Solar System & Pluto notes.
   </p>
 
-  <div id="flashcard" class="card">
-    <div class="card-label" id="card-label">Term</div>
-    <div class="card-content" id="card-content"></div>
-    <div class="card-hint" id="card-hint">
-      Click to show the other side
+  <!-- MODE SWITCH -->
+  <div class="mode-switch">
+    <button class="mode-button mode-active" data-mode="flashcards">
+      Flashcards
+    </button>
+    <button class="mode-button" data-mode="matching">Matching</button>
+    <button class="mode-button" data-mode="quiz">Quiz</button>
+  </div>
+
+  <!-- FLASHCARDS MODE -->
+  <div id="mode-flashcards" class="mode">
+    <div id="flashcard" class="card">
+      <div class="card-label" id="card-label">Term</div>
+      <div class="card-content" id="card-content"></div>
+      <div class="card-hint" id="card-hint">
+        Click to show the other side
+      </div>
     </div>
+
+    <div class="controls">
+      <button id="prev">◀ Prev</button>
+      <button id="flip" class="primary">Flip</button>
+      <button id="next">Next ▶</button>
+      <button id="shuffle">Shuffle</button>
+    </div>
+
+    <div class="controls">
+      <button id="know" class="good">Got it ✅</button>
+      <button id="dontKnow" class="bad">Not yet ❌</button>
+      <button id="reset">Reset stats</button>
+    </div>
+
+    <div class="stats" id="stats"></div>
   </div>
 
-  <div class="controls">
-    <button id="prev">◀ Prev</button>
-    <button id="flip" class="primary">Flip</button>
-    <button id="next">Next ▶</button>
-    <button id="shuffle">Shuffle</button>
+  <!-- MATCHING MODE -->
+  <div id="mode-matching" class="mode hidden">
+    <p class="subtitle">
+      Match each <strong>term</strong> on the left with the correct
+      <strong>definition</strong> on the right.
+    </p>
+    <div id="matching-container"></div>
+    <div class="controls">
+      <button id="matching-new" class="primary">New round</button>
+      <button id="matching-check">Check answers</button>
+    </div>
+    <div class="stats" id="matching-result"></div>
   </div>
 
-  <div class="controls">
-    <button id="know" class="good">Got it ✅</button>
-    <button id="dontKnow" class="bad">Not yet ❌</button>
-    <button id="reset">Reset stats</button>
-  </div>
+  <!-- QUIZ MODE -->
+  <div id="mode-quiz" class="mode hidden">
+    <p class="subtitle">
+      Multiple-choice: pick the correct <strong>term</strong> for each definition.
+    </p>
 
-  <div class="stats" id="stats"></div>
+    <div class="quiz-card">
+      <div class="quiz-question-label">Question</div>
+      <div class="quiz-question-text" id="quiz-question"></div>
+      <div class="quiz-options" id="quiz-options"></div>
+      <div class="quiz-feedback" id="quiz-feedback"></div>
+    </div>
+
+    <div class="controls">
+      <button id="quiz-next" class="primary">Next question</button>
+      <button id="quiz-reset">Reset quiz stats</button>
+    </div>
+    <div class="stats" id="quiz-stats"></div>
+  </div>
 
   <p class="tagline">
     To add or change cards, edit the <strong>flashcards</strong> array in the
@@ -183,7 +368,10 @@
   </p>
 
   <script>
-    // FLASHCARDS DATA – edit or add cards here
+    // ==========================
+    //  FLASHCARDS DATA
+    //  Edit or add cards here.
+    // ==========================
     const flashcards = [
       {
         term: "Nebular Theory",
@@ -228,11 +416,13 @@
       },
       {
         term: "IAU Planet Criterion #2",
-        definition: "The object must be nearly spherical (in hydrostatic equilibrium)."
+        definition:
+          "The object must be nearly spherical (in hydrostatic equilibrium)."
       },
       {
         term: "IAU Planet Criterion #3",
-        definition: "The object must have cleared its orbital neighborhood of other debris."
+        definition:
+          "The object must have cleared its orbital neighborhood of other debris."
       },
       {
         term: "Why Pluto Is Not a Planet",
@@ -285,6 +475,42 @@
       }
     ];
 
+    // ==========================
+    //  MODE SWITCHING
+    // ==========================
+    const modes = {
+      flashcards: document.getElementById("mode-flashcards"),
+      matching: document.getElementById("mode-matching"),
+      quiz: document.getElementById("mode-quiz")
+    };
+
+    const modeButtons = document.querySelectorAll(".mode-button");
+
+    function switchMode(modeName) {
+      Object.entries(modes).forEach(([name, el]) => {
+        if (name === modeName) el.classList.remove("hidden");
+        else el.classList.add("hidden");
+      });
+
+      modeButtons.forEach((btn) => {
+        if (btn.dataset.mode === modeName)
+          btn.classList.add("mode-active");
+        else btn.classList.remove("mode-active");
+      });
+
+      // little reset per mode
+      if (modeName === "flashcards") renderCard();
+      if (modeName === "matching") buildMatchingRound();
+      if (modeName === "quiz") initQuizQuestion();
+    }
+
+    modeButtons.forEach((btn) => {
+      btn.addEventListener("click", () => switchMode(btn.dataset.mode));
+    });
+
+    // ==========================
+    //  FLASHCARDS LOGIC
+    // ==========================
     let currentIndex = 0;
     let showingTerm = true;
     let known = 0;
@@ -381,11 +607,13 @@
     document.getElementById("flip").addEventListener("click", flipCard);
     document.getElementById("shuffle").addEventListener("click", shuffleCards);
     document.getElementById("know").addEventListener("click", markKnown);
-    document.getElementById("dontKnow").addEventListener("click", markUnknown);
+    document
+      .getElementById("dontKnow")
+      .addEventListener("click", markUnknown);
     document.getElementById("reset").addEventListener("click", resetStats);
-
     card.addEventListener("click", flipCard);
 
+    // keyboard shortcuts only really matter in flashcard mode, but harmless elsewhere
     document.addEventListener("keydown", (e) => {
       if (e.code === "ArrowRight") nextCard();
       else if (e.code === "ArrowLeft") prevCard();
@@ -396,7 +624,206 @@
       else if (e.key === "2") markUnknown();
     });
 
+    // ==========================
+    //  MATCHING MODE LOGIC
+    // ==========================
+    const matchingContainer = document.getElementById("matching-container");
+    const matchingResult = document.getElementById("matching-result");
+    const matchingNewBtn = document.getElementById("matching-new");
+    const matchingCheckBtn = document.getElementById("matching-check");
+
+    function getRandomSample(arr, count) {
+      const copy = arr.slice();
+      const result = [];
+      count = Math.min(count, copy.length);
+      for (let i = 0; i < count; i++) {
+        const idx = Math.floor(Math.random() * copy.length);
+        result.push(copy.splice(idx, 1)[0]);
+      }
+      return result;
+    }
+
+    function buildMatchingRound() {
+      matchingContainer.innerHTML = "";
+      matchingResult.textContent = "";
+
+      const roundCards = getRandomSample(flashcards, 6); // 6 pairs
+      const definitions = roundCards.map((c) => c.definition);
+      // shuffle definitions
+      for (let i = definitions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [definitions[i], definitions[j]] = [definitions[j], definitions[i]];
+      }
+
+      roundCards.forEach((cardData, idx) => {
+        const row = document.createElement("div");
+        row.className = "matching-row";
+
+        const termDiv = document.createElement("div");
+        termDiv.className = "matching-term";
+        termDiv.textContent = cardData.term;
+        row.appendChild(termDiv);
+
+        const select = document.createElement("select");
+        select.className = "matching-select";
+        select.dataset.correctDefinition = cardData.definition;
+
+        const placeholder = document.createElement("option");
+        placeholder.value = "";
+        placeholder.textContent = "Select definition…";
+        placeholder.disabled = true;
+        placeholder.selected = true;
+        select.appendChild(placeholder);
+
+        definitions.forEach((def) => {
+          const opt = document.createElement("option");
+          opt.value = def;
+          opt.textContent = def.length > 120 ? def.slice(0, 120) + "…" : def;
+          select.appendChild(opt);
+        });
+
+        row.appendChild(select);
+        matchingContainer.appendChild(row);
+      });
+    }
+
+    function checkMatchingAnswers() {
+      const selects = matchingContainer.querySelectorAll("select");
+      if (!selects.length) return;
+
+      let correct = 0;
+      let total = selects.length;
+
+      selects.forEach((sel) => {
+        sel.classList.remove("correct", "incorrect");
+        if (!sel.value) return;
+        if (sel.value === sel.dataset.correctDefinition) {
+          correct++;
+          sel.classList.add("correct");
+        } else {
+          sel.classList.add("incorrect");
+        }
+      });
+
+      matchingResult.textContent =
+        "You matched " + correct + " out of " + total + ".";
+    }
+
+    matchingNewBtn.addEventListener("click", buildMatchingRound);
+    matchingCheckBtn.addEventListener("click", checkMatchingAnswers);
+
+    // ==========================
+    //  QUIZ MODE LOGIC
+    // ==========================
+    const quizQuestionEl = document.getElementById("quiz-question");
+    const quizOptionsEl = document.getElementById("quiz-options");
+    const quizFeedbackEl = document.getElementById("quiz-feedback");
+    const quizStatsEl = document.getElementById("quiz-stats");
+    const quizNextBtn = document.getElementById("quiz-next");
+    const quizResetBtn = document.getElementById("quiz-reset");
+
+    let quizCorrect = 0;
+    let quizTotal = 0;
+    let currentQuizAnswer = null;
+    let quizAnswered = false;
+
+    function shuffleArray(arr) {
+      const copy = arr.slice();
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function initQuizQuestion() {
+      quizFeedbackEl.textContent = "";
+      quizFeedbackEl.className = "quiz-feedback";
+
+      const cardIdx = Math.floor(Math.random() * flashcards.length);
+      const cardData = flashcards[cardIdx];
+
+      currentQuizAnswer = cardData.term;
+      quizAnswered = false;
+
+      // definition as the prompt
+      quizQuestionEl.textContent = cardData.definition;
+
+      // build options: correct + 3 random others
+      const otherTerms = flashcards
+        .map((c) => c.term)
+        .filter((t) => t !== currentQuizAnswer);
+      const choices = getRandomSample(otherTerms, 3);
+      choices.push(currentQuizAnswer);
+
+      const shuffledChoices = shuffleArray(choices);
+
+      quizOptionsEl.innerHTML = "";
+      shuffledChoices.forEach((choice) => {
+        const btn = document.createElement("button");
+        btn.className = "quiz-option";
+        btn.textContent = choice;
+        btn.addEventListener("click", () => handleQuizAnswer(btn, choice));
+        quizOptionsEl.appendChild(btn);
+      });
+
+      updateQuizStats();
+    }
+
+    function handleQuizAnswer(button, choice) {
+      if (quizAnswered) return; // ignore extra clicks
+      quizAnswered = true;
+      quizTotal++;
+
+      const optionButtons = quizOptionsEl.querySelectorAll("button");
+      optionButtons.forEach((btn) => {
+        btn.disabled = true;
+        if (btn.textContent === currentQuizAnswer) {
+          btn.classList.add("correct");
+        }
+      });
+
+      if (choice === currentQuizAnswer) {
+        quizCorrect++;
+        quizFeedbackEl.textContent = "Correct! ✅";
+        quizFeedbackEl.classList.add("correct");
+      } else {
+        quizFeedbackEl.textContent =
+          "Not quite. The correct answer was: " + currentQuizAnswer;
+        quizFeedbackEl.classList.add("incorrect");
+        button.classList.add("incorrect");
+      }
+
+      updateQuizStats();
+    }
+
+    function updateQuizStats() {
+      const pct =
+        quizTotal === 0 ? 0 : Math.round((quizCorrect / quizTotal) * 100);
+      quizStatsEl.textContent =
+        "Score: " +
+        quizCorrect +
+        "/" +
+        quizTotal +
+        " (" +
+        pct +
+        "% correct)";
+    }
+
+    quizNextBtn.addEventListener("click", initQuizQuestion);
+    quizResetBtn.addEventListener("click", () => {
+      quizCorrect = 0;
+      quizTotal = 0;
+      updateQuizStats();
+      initQuizQuestion();
+    });
+
+    // ==========================
+    //  INITIALIZE
+    // ==========================
     renderCard();
+    buildMatchingRound();
+    initQuizQuestion();
   </script>
 </body>
 </html>
