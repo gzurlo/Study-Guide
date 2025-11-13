@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Study Buddy – Flashcard App</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      margin: 0;
+      padding: 24px;
+    }
+
+    h1 {
+      margin-top: 8px;
+      margin-bottom: 4px;
+      font-size: 1.8rem;
+      text-align: center;
+    }
+
+    p.subtitle {
+      margin-top: 0;
+      margin-bottom: 16px;
+      color: #9ca3af;
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    .card {
+      background: #111827;
+      border-radius: 18px;
+      padding: 24px 28px;
+      max-width: 640px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+      margin: 16px 0;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease,
+        background 0.15s ease;
+      border: 1px solid #1f2937;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.55);
+      background: #020617;
+    }
+
+    .card-label {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.7rem;
+      color: #6366f1;
+      margin-bottom: 6px;
+    }
+
+    .card-content {
+      font-size: 1.1rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    .card-hint {
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 10px;
+      margin-bottom: 12px;
+    }
+
+    button {
+      border-radius: 999px;
+      border: none;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      background: #1f2937;
+      color: #e5e7eb;
+      transition: background 0.15s ease, transform 0.1s ease,
+        box-shadow 0.1s ease;
+      border: 1px solid #374151;
+    }
+
+    button.primary {
+      background: #4f46e5;
+      border-color: #6366f1;
+    }
+
+    button.good {
+      background: #16a34a;
+      border-color: #22c55e;
+    }
+
+    button.bad {
+      background: #b91c1c;
+      border-color: #ef4444;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4);
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    .stats {
+      margin-top: 6px;
+      font-size: 0.85rem;
+      color: #9ca3af;
+      text-align: center;
+    }
+
+    .stats span {
+      margin: 0 6px;
+    }
+
+    .tagline {
+      margin-top: 18px;
+      font-size: 0.8rem;
+      color: #6b7280;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 16px;
+      }
+
+      .card {
+        padding: 18px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Study Buddy</h1>
+  <p class="subtitle">
+    Click the card to flip. Use the buttons to track what you know.
+  </p>
+
+  <div id="flashcard" class="card">
+    <div class="card-label" id="card-label">Term</div>
+    <div class="card-content" id="card-content"></div>
+    <div class="card-hint" id="card-hint">
+      Click to show the other side
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="prev">◀ Prev</button>
+    <button id="flip" class="primary">Flip</button>
+    <button id="next">Next ▶</button>
+    <button id="shuffle">Shuffle</button>
+  </div>
+
+  <div class="controls">
+    <button id="know" class="good">Got it ✅</button>
+    <button id="dontKnow" class="bad">Not yet ❌</button>
+    <button id="reset">Reset stats</button>
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <p class="tagline">
+    To add or change cards, edit the <strong>flashcards</strong> array in the
+    HTML file.
+  </p>
+
+  <script>
+    // FLASHCARDS DATA – edit or add cards here
+    const flashcards = [
+      {
+        term: "Nebular Theory",
+        definition:
+          "The Sun and planets formed from a collapsing, rotating cloud of gas and dust (a nebula)."
+      },
+      {
+        term: "Role of Gravity in Solar System Formation",
+        definition:
+          "Gravity caused the nebula to collapse, forming the Sun at the center and planets from leftover material."
+      },
+      {
+        term: "Main Components of the Solar System",
+        definition: "The Sun, eight planets, asteroids, and comets."
+      },
+      {
+        term: "The Sun – Composition",
+        definition: "Mostly hydrogen in the plasma phase."
+      },
+      {
+        term: "The Sun – Energy Source",
+        definition:
+          "Thermonuclear fusion: hydrogen nuclei fuse into helium in the core, releasing energy."
+      },
+      {
+        term: "Sun Mass Loss",
+        definition:
+          "About 4.5 million tons of mass per second are converted to energy."
+      },
+      {
+        term: "Terrestrial Planets",
+        definition: "Mercury, Venus, Earth, and Mars – small, rocky, and dense."
+      },
+      {
+        term: "Jovian Planets",
+        definition:
+          "Jupiter, Saturn, Uranus, and Neptune – large, gaseous, low density, with many moons and ring systems."
+      },
+      {
+        term: "IAU Planet Criterion #1",
+        definition: "The object must orbit the Sun."
+      },
+      {
+        term: "IAU Planet Criterion #2",
+        definition: "The object must be nearly spherical (in hydrostatic equilibrium)."
+      },
+      {
+        term: "IAU Planet Criterion #3",
+        definition: "The object must have cleared its orbital neighborhood of other debris."
+      },
+      {
+        term: "Why Pluto Is Not a Planet",
+        definition:
+          "Pluto has not cleared its orbit of other debris and shares its region with many Kuiper Belt Objects."
+      },
+      {
+        term: "Pluto – Location",
+        definition: "Pluto orbits in the Kuiper Belt beyond Neptune."
+      },
+      {
+        term: "Pluto – Composition and Size",
+        definition:
+          "A small body made of rock and ice, smaller than Earth’s Moon, with a density of about 2 g/cm³."
+      },
+      {
+        term: "Trans-Neptunian Object (TNO)",
+        definition:
+          "A small icy object whose orbit lies beyond Neptune; Pluto is one example."
+      },
+      {
+        term: "Kuiper Belt Object (KBO)",
+        definition:
+          "An icy body in the Kuiper Belt (roughly 30–50 AU from the Sun), such as Pluto, Haumea, or Makemake."
+      },
+      {
+        term: "Plutino",
+        definition:
+          "A TNO in a 2:3 orbital resonance with Neptune; it orbits the Sun twice for every three Neptune orbits."
+      },
+      {
+        term: "Orbital Resonance",
+        definition:
+          "A condition where orbiting bodies exert regular gravitational influence because their orbital periods form a simple integer ratio."
+      },
+      {
+        term: "Asteroid",
+        definition:
+          "A rocky body, mostly found in the asteroid belt between Mars and Jupiter."
+      },
+      {
+        term: "Comet",
+        definition:
+          "An icy body that can develop a glowing coma and tail when it gets close to the Sun."
+      },
+      {
+        term: "Meteoroid, Meteor, Meteorite",
+        definition:
+          "Meteoroid: small debris in space. Meteor: the streak of light when it enters Earth’s atmosphere. Meteorite: the part that reaches the ground."
+      }
+    ];
+
+    let currentIndex = 0;
+    let showingTerm = true;
+    let known = 0;
+    let unknown = 0;
+    let reviewed = 0;
+
+    const card = document.getElementById("flashcard");
+    const cardLabel = document.getElementById("card-label");
+    const cardContent = document.getElementById("card-content");
+    const cardHint = document.getElementById("card-hint");
+    const statsDiv = document.getElementById("stats");
+
+    function renderCard() {
+      const fc = flashcards[currentIndex];
+      if (showingTerm) {
+        cardLabel.textContent = "Term";
+        cardContent.textContent = fc.term;
+        cardHint.textContent = "Click or press Flip to see the definition";
+      } else {
+        cardLabel.textContent = "Definition";
+        cardContent.textContent = fc.definition;
+        cardHint.textContent = "Click or press Flip to go back to the term";
+      }
+      updateStats();
+    }
+
+    function updateStats() {
+      statsDiv.innerHTML =
+        "<span>Card " +
+        (currentIndex + 1) +
+        " / " +
+        flashcards.length +
+        "</span>" +
+        "<span>Reviewed: " +
+        reviewed +
+        "</span>" +
+        "<span>Got it: " +
+        known +
+        "</span>" +
+        "<span>Not yet: " +
+        unknown +
+        "</span>";
+    }
+
+    function nextCard() {
+      currentIndex = (currentIndex + 1) % flashcards.length;
+      showingTerm = true;
+      renderCard();
+    }
+
+    function prevCard() {
+      currentIndex =
+        (currentIndex - 1 + flashcards.length) % flashcards.length;
+      showingTerm = true;
+      renderCard();
+    }
+
+    function flipCard() {
+      showingTerm = !showingTerm;
+      renderCard();
+    }
+
+    function shuffleCards() {
+      for (let i = flashcards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [flashcards[i], flashcards[j]] = [flashcards[j], flashcards[i]];
+      }
+      currentIndex = 0;
+      showingTerm = true;
+      renderCard();
+    }
+
+    function markKnown() {
+      known++;
+      reviewed++;
+      nextCard();
+    }
+
+    function markUnknown() {
+      unknown++;
+      reviewed++;
+      nextCard();
+    }
+
+    function resetStats() {
+      known = 0;
+      unknown = 0;
+      reviewed = 0;
+      renderCard();
+    }
+
+    document.getElementById("next").addEventListener("click", nextCard);
+    document.getElementById("prev").addEventListener("click", prevCard);
+    document.getElementById("flip").addEventListener("click", flipCard);
+    document.getElementById("shuffle").addEventListener("click", shuffleCards);
+    document.getElementById("know").addEventListener("click", markKnown);
+    document.getElementById("dontKnow").addEventListener("click", markUnknown);
+    document.getElementById("reset").addEventListener("click", resetStats);
+
+    card.addEventListener("click", flipCard);
+
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "ArrowRight") nextCard();
+      else if (e.code === "ArrowLeft") prevCard();
+      else if (e.code === "Space") {
+        e.preventDefault();
+        flipCard();
+      } else if (e.key === "1") markKnown();
+      else if (e.key === "2") markUnknown();
+    });
+
+    renderCard();
+  </script>
+</body>
+</html>
