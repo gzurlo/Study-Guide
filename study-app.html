@@ -1,1171 +1,1297 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Study Buddy – Solar System Study Suite</title>
-  <style>
-    :root {
-      color-scheme: dark;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <title>Study Buddy – Quiz 7: Moon, Stars & Galaxies</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
 
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-        sans-serif;
-      background: #020617;
-      color: #e5e7eb;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
-      margin: 0;
-      padding: 24px;
-    }
-
-    h1 {
-      margin-top: 8px;
-      margin-bottom: 4px;
-      font-size: 1.9rem;
-      text-align: center;
-    }
-
-    p.subtitle {
-      margin-top: 0;
-      margin-bottom: 10px;
-      color: #9ca3af;
-      text-align: center;
-      font-size: 0.95rem;
-    }
-
-    .app-shell {
-      width: 100%;
-      max-width: 860px;
-    }
-
-    .top-row {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    .deck-label {
-      font-size: 0.85rem;
-      color: #9ca3af;
-    }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid #1f2937;
-      background: #020617;
-      font-size: 0.8rem;
-      color: #9ca3af;
-    }
-
-    .pill strong {
-      color: #e5e7eb;
-    }
-
-    .mode-switch {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 8px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .mode-button {
-      border-radius: 999px;
-      border: 1px solid #374151;
-      padding: 6px 14px;
-      font-size: 0.85rem;
-      cursor: pointer;
-      background: #0b1120;
-      color: #e5e7eb;
-      transition: background 0.15s ease, transform 0.1s ease,
-        box-shadow 0.1s ease, border-color 0.1s ease;
-    }
-
-    .mode-button.mode-active {
-      background: #4f46e5;
-      border-color: #6366f1;
-      box-shadow: 0 8px 24px rgba(79, 70, 229, 0.35);
-    }
-
-    .mode-button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
-    }
-
-    .filter-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      justify-content: center;
-      margin-bottom: 6px;
-    }
-
-    .filter-button {
-      border-radius: 999px;
-      border: 1px solid #374151;
-      padding: 4px 10px;
-      font-size: 0.78rem;
-      cursor: pointer;
-      background: #020617;
-      color: #9ca3af;
-      transition: background 0.15s ease, border-color 0.1s ease;
-    }
-
-    .filter-button.filter-active {
-      background: #0369a1;
-      color: #e5e7eb;
-      border-color: #0ea5e9;
-    }
-
-    .filter-note {
-      text-align: center;
-      font-size: 0.78rem;
-      color: #6b7280;
-      margin-bottom: 6px;
-    }
-
-    .mode {
-      width: 100%;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .card {
-      background: #020617;
-      border-radius: 18px;
-      padding: 24px 28px;
-      max-width: 640px;
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
-      margin: 16px auto;
-      cursor: pointer;
-      transition: transform 0.15s ease, box-shadow 0.15s ease,
-        background 0.15s ease;
-      border: 1px solid #1f2937;
-    }
-
-    .card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.6);
-      background: #02041b;
-    }
-
-    .card-label {
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      font-size: 0.7rem;
-      color: #6366f1;
-      margin-bottom: 6px;
-    }
-
-    .card-content {
-      font-size: 1.1rem;
-      line-height: 1.5;
-      white-space: pre-wrap;
-    }
-
-    .card-hint {
-      margin-top: 8px;
-      font-size: 0.8rem;
-      color: #6b7280;
-    }
-
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      justify-content: center;
-      margin-top: 6px;
-      margin-bottom: 10px;
-    }
-
-    button {
-      border-radius: 999px;
-      border: none;
-      padding: 8px 16px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      background: #111827;
-      color: #e5e7eb;
-      transition: background 0.15s ease, transform 0.1s ease,
-        box-shadow 0.1s ease;
-      border: 1px solid #374151;
-    }
-
-    button.primary {
-      background: #4f46e5;
-      border-color: #6366f1;
-    }
-
-    button.good {
-      background: #16a34a;
-      border-color: #22c55e;
-    }
-
-    button.bad {
-      background: #b91c1c;
-      border-color: #ef4444;
-    }
-
-    button.subtle {
-      background: #020617;
-      border-color: #1f2937;
-      font-size: 0.8rem;
-      padding: 5px 12px;
-    }
-
-    button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4);
-    }
-
-    button:active {
-      transform: translateY(0);
-      box-shadow: none;
-    }
-
-    .stats {
-      margin-top: 6px;
-      font-size: 0.85rem;
-      color: #9ca3af;
-      text-align: center;
-    }
-
-    .stats span {
-      margin: 0 6px;
-    }
-
-    .tagline {
-      margin-top: 18px;
-      font-size: 0.78rem;
-      color: #6b7280;
-      text-align: center;
-    }
-
-    .tagline kbd {
-      background: #020617;
-      border-radius: 4px;
-      padding: 1px 4px;
-      border: 1px solid #1f2937;
-      font-size: 0.7rem;
-    }
-
-    /* Matching */
-
-    .matching-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 6px;
-      font-size: 0.9rem;
-    }
-
-    .matching-term {
-      flex: 0 0 38%;
-      padding: 6px 10px;
-      background: #020617;
-      border-radius: 10px;
-      border: 1px solid #111827;
-    }
-
-    .matching-select {
-      flex: 1;
-      padding: 6px 8px;
-      border-radius: 999px;
-      border: 1px solid #374151;
-      background: #020617;
-      color: #e5e7eb;
-      font-size: 0.85rem;
-    }
-
-    .matching-select.correct {
-      border-color: #22c55e;
-      box-shadow: 0 0 0 1px #22c55e;
-    }
-
-    .matching-select.incorrect {
-      border-color: #ef4444;
-      box-shadow: 0 0 0 1px #ef4444;
-    }
-
-    /* Quiz */
-
-    .quiz-card {
-      background: #020617;
-      border-radius: 18px;
-      padding: 22px 24px;
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
-      border: 1px solid #1f2937;
-      margin: 16px auto;
-      max-width: 640px;
-    }
-
-    .quiz-question-label {
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      font-size: 0.7rem;
-      color: #f97316;
-      margin-bottom: 6px;
-    }
-
-    .quiz-question-text {
-      font-size: 1rem;
-      line-height: 1.4;
-      margin-bottom: 14px;
-    }
-
-    .quiz-options {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .quiz-option {
-      text-align: left;
-      width: 100%;
-    }
-
-    .quiz-option.correct {
-      background: #14532d;
-      border-color: #22c55e;
-    }
-
-    .quiz-option.incorrect {
-      background: #7f1d1d;
-      border-color: #ef4444;
-    }
-
-    .quiz-feedback {
-      margin-top: 10px;
-      font-size: 0.9rem;
-    }
-
-    .quiz-feedback.correct {
-      color: #4ade80;
-    }
-
-    .quiz-feedback.incorrect {
-      color: #fca5a5;
-    }
-
-    @media (max-width: 600px) {
       body {
-        padding: 16px;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+          sans-serif;
+        background: #020617;
+        color: #e5e7eb;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+        margin: 0;
+        padding: 24px;
+      }
+
+      h1 {
+        margin-top: 8px;
+        margin-bottom: 4px;
+        font-size: 1.9rem;
+        text-align: center;
+      }
+
+      p.subtitle {
+        margin-top: 0;
+        margin-bottom: 10px;
+        color: #9ca3af;
+        text-align: center;
+        font-size: 0.95rem;
+      }
+
+      .app-shell {
+        width: 100%;
+        max-width: 860px;
+      }
+
+      .top-row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      .deck-label {
+        font-size: 0.85rem;
+        color: #9ca3af;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        border: 1px solid #1f2937;
+        background: #020617;
+        font-size: 0.8rem;
+        color: #9ca3af;
+      }
+
+      .pill strong {
+        color: #e5e7eb;
+      }
+
+      .mode-switch {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .mode-button {
+        border-radius: 999px;
+        border: 1px solid #374151;
+        padding: 6px 14px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        background: #0b1120;
+        color: #e5e7eb;
+        transition: background 0.15s ease, transform 0.1s ease,
+          box-shadow 0.1s ease, border-color 0.1s ease;
+      }
+
+      .mode-button.mode-active {
+        background: #4f46e5;
+        border-color: #6366f1;
+        box-shadow: 0 8px 24px rgba(79, 70, 229, 0.35);
+      }
+
+      .mode-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
+      }
+
+      .filter-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        justify-content: center;
+        margin-bottom: 6px;
+      }
+
+      .filter-button {
+        border-radius: 999px;
+        border: 1px solid #374151;
+        padding: 4px 10px;
+        font-size: 0.78rem;
+        cursor: pointer;
+        background: #020617;
+        color: #9ca3af;
+        transition: background 0.15s ease, border-color 0.1s ease;
+      }
+
+      .filter-button.filter-active {
+        background: #0369a1;
+        color: #e5e7eb;
+        border-color: #0ea5e9;
+      }
+
+      .filter-note {
+        text-align: center;
+        font-size: 0.78rem;
+        color: #6b7280;
+        margin-bottom: 6px;
+      }
+
+      .mode {
+        width: 100%;
+      }
+
+      .hidden {
+        display: none;
       }
 
       .card,
       .quiz-card {
-        padding: 18px 20px;
+        background: #020617;
+        border-radius: 18px;
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+        border: 1px solid #1f2937;
+        margin: 16px auto;
+        max-width: 640px;
       }
-    }
-  </style>
-</head>
-<body>
-  <h1>Study Buddy</h1>
-  <p class="subtitle">
-    Flashcards, matching, and quizzes for your Solar System & Pluto notes.
-  </p>
 
-  <div class="app-shell">
-    <div class="top-row">
-      <div class="deck-label">
-        Deck: <strong>Solar System &amp; Pluto</strong>
-      </div>
-      <div class="pill">
-        Cards in deck:
-        <strong id="deck-count">0</strong>
-      </div>
-    </div>
+      .card {
+        padding: 24px 28px;
+        cursor: pointer;
+        transition: transform 0.15s ease, box-shadow 0.15s ease,
+          background 0.15s ease;
+      }
 
-    <!-- MODE SWITCH -->
-    <div class="mode-switch">
-      <button class="mode-button mode-active" data-mode="flashcards">
-        Flashcards
-      </button>
-      <button class="mode-button" data-mode="matching">Matching</button>
-      <button class="mode-button" data-mode="quiz">Quiz</button>
-    </div>
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 22px 50px rgba(0, 0, 0, 0.6);
+        background: #02041b;
+      }
 
-    <!-- FILTERS -->
-    <div class="filter-row">
-      <button class="filter-button filter-active" data-filter="all">
-        All cards
-      </button>
-      <button class="filter-button" data-filter="unknown">
-        Only “Not yet”
-      </button>
-      <button class="filter-button" data-filter="known">
-        Only “Got it”
-      </button>
-    </div>
-    <div class="filter-note">
-      Filters apply to <strong>all modes</strong>. Progress is saved
-      automatically on this device.
-    </div>
+      .quiz-card {
+        padding: 22px 24px;
+      }
 
-    <!-- FLASHCARDS MODE -->
-    <div id="mode-flashcards" class="mode">
-      <div id="flashcard" class="card">
-        <div class="card-label" id="card-label">Term</div>
-        <div class="card-content" id="card-content"></div>
-        <div class="card-hint" id="card-hint">
-          Click card or press <kbd>Space</kbd> to flip.
-        </div>
-      </div>
+      .card-label {
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 0.7rem;
+        color: #6366f1;
+        margin-bottom: 6px;
+      }
 
-      <div class="controls">
-        <button id="prev">◀ Prev</button>
-        <button id="flip" class="primary">Flip</button>
-        <button id="next">Next ▶</button>
-        <button id="shuffle">Shuffle</button>
-      </div>
+      .card-content {
+        font-size: 1.1rem;
+        line-height: 1.5;
+        white-space: pre-wrap;
+      }
 
-      <div class="controls">
-        <button id="know" class="good">Got it ✅</button>
-        <button id="dontKnow" class="bad">Not yet ❌</button>
-        <button id="reset" class="subtle">Reset flashcard stats</button>
-      </div>
+      .card-hint {
+        margin-top: 8px;
+        font-size: 0.8rem;
+        color: #6b7280;
+      }
 
-      <div class="stats" id="stats"></div>
-    </div>
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+        margin-top: 6px;
+        margin-bottom: 10px;
+      }
 
-    <!-- MATCHING MODE -->
-    <div id="mode-matching" class="mode hidden">
-      <p class="subtitle">
-        Match each <strong>term</strong> on the left with the correct
-        <strong>definition</strong> on the right.
-      </p>
-      <div id="matching-container"></div>
-      <div class="controls">
-        <button id="matching-new" class="primary">New round</button>
-        <button id="matching-check">Check answers</button>
-      </div>
-      <div class="stats" id="matching-result"></div>
-    </div>
+      button {
+        border-radius: 999px;
+        border: 1px solid #374151;
+        padding: 8px 16px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        background: #111827;
+        color: #e5e7eb;
+        transition: background 0.15s ease, transform 0.1s ease,
+          box-shadow 0.1s ease;
+      }
 
-    <!-- QUIZ MODE -->
-    <div id="mode-quiz" class="mode hidden">
-      <p class="subtitle">
-        Multiple-choice: pick the correct <strong>term</strong> for each
-        definition. Questions won’t repeat until you’ve seen them all.
-      </p>
+      button.primary {
+        background: #4f46e5;
+        border-color: #6366f1;
+      }
 
-      <div class="quiz-card">
-        <div class="quiz-question-label" id="quiz-round-label">
-          Question
-        </div>
-        <div class="quiz-question-text" id="quiz-question"></div>
-        <div class="quiz-options" id="quiz-options"></div>
-        <div class="quiz-feedback" id="quiz-feedback"></div>
-      </div>
+      button.good {
+        background: #16a34a;
+        border-color: #22c55e;
+      }
 
-      <div class="controls">
-        <button id="quiz-next" class="primary">Next question</button>
-        <button id="quiz-retry" class="subtle">
-          Retry missed questions
-        </button>
-        <button id="quiz-reset" class="subtle">Reset quiz stats</button>
-      </div>
-      <div class="stats" id="quiz-stats"></div>
-    </div>
+      button.bad {
+        background: #b91c1c;
+        border-color: #ef4444;
+      }
 
-    <p class="tagline">
-      Keyboard shortcuts in flashcards: <kbd>←</kbd>/<kbd>→</kbd> =
-      prev/next, <kbd>Space</kbd> = flip, <kbd>1</kbd> = Got it,
-      <kbd>2</kbd> = Not yet.
+      button.subtle {
+        background: #020617;
+        border-color: #1f2937;
+        font-size: 0.8rem;
+        padding: 5px 12px;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4);
+      }
+
+      button:active {
+        transform: translateY(0);
+        box-shadow: none;
+      }
+
+      .stats {
+        margin-top: 6px;
+        font-size: 0.85rem;
+        color: #9ca3af;
+        text-align: center;
+      }
+
+      .stats span {
+        margin: 0 6px;
+      }
+
+      .tagline {
+        margin-top: 18px;
+        font-size: 0.78rem;
+        color: #6b7280;
+        text-align: center;
+      }
+
+      .tagline kbd {
+        background: #020617;
+        border-radius: 4px;
+        padding: 1px 4px;
+        border: 1px solid #1f2937;
+        font-size: 0.7rem;
+      }
+
+      /* Matching */
+
+      .matching-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 6px;
+        font-size: 0.9rem;
+      }
+
+      .matching-term {
+        flex: 0 0 38%;
+        padding: 6px 10px;
+        background: #020617;
+        border-radius: 10px;
+        border: 1px solid #111827;
+      }
+
+      .matching-select {
+        flex: 1;
+        padding: 6px 8px;
+        border-radius: 999px;
+        border: 1px solid #374151;
+        background: #020617;
+        color: #e5e7eb;
+        font-size: 0.85rem;
+      }
+
+      .matching-select.correct {
+        border-color: #22c55e;
+        box-shadow: 0 0 0 1px #22c55e;
+      }
+
+      .matching-select.incorrect {
+        border-color: #ef4444;
+        box-shadow: 0 0 0 1px #ef4444;
+      }
+
+      /* Quiz */
+
+      .quiz-question-label {
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 0.7rem;
+        color: #f97316;
+        margin-bottom: 6px;
+      }
+
+      .quiz-question-text {
+        font-size: 1rem;
+        line-height: 1.4;
+        margin-bottom: 14px;
+      }
+
+      .quiz-options {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .quiz-option {
+        text-align: left;
+        width: 100%;
+      }
+
+      .quiz-option.correct {
+        background: #14532d;
+        border-color: #22c55e;
+      }
+
+      .quiz-option.incorrect {
+        background: #7f1d1d;
+        border-color: #ef4444;
+      }
+
+      .quiz-feedback {
+        margin-top: 10px;
+        font-size: 0.9rem;
+      }
+
+      .quiz-feedback.correct {
+        color: #4ade80;
+      }
+
+      .quiz-feedback.incorrect {
+        color: #fca5a5;
+      }
+
+      @media (max-width: 600px) {
+        body {
+          padding: 16px;
+        }
+
+        .card,
+        .quiz-card {
+          padding: 18px 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Study Buddy – Quiz 7</h1>
+    <p class="subtitle">
+      The Moon, Night Sky &amp; Stars, H–R Diagram, and Galaxies.
     </p>
-  </div>
 
-  <script>
-    // ==========================
-    //  DATA
-    // ==========================
-    // Each card has a stable id so we can track known/unknown in localStorage.
-    const flashcards = [
-      {
-        id: 1,
-        term: "Nebular Theory",
-        definition:
-          "The Sun and planets formed from a collapsing, rotating cloud of gas and dust (a nebula)."
-      },
-      {
-        id: 2,
-        term: "Role of Gravity in Solar System Formation",
-        definition:
-          "Gravity caused the nebula to collapse, forming the Sun at the center and planets from leftover material."
-      },
-      {
-        id: 3,
-        term: "Main Components of the Solar System",
-        definition: "The Sun, eight planets, asteroids, and comets."
-      },
-      {
-        id: 4,
-        term: "The Sun – Composition",
-        definition: "Mostly hydrogen in the plasma phase."
-      },
-      {
-        id: 5,
-        term: "The Sun – Energy Source",
-        definition:
-          "Thermonuclear fusion: hydrogen nuclei fuse into helium in the core, releasing energy."
-      },
-      {
-        id: 6,
-        term: "Sun Mass Loss",
-        definition:
-          "About 4.5 million tons of mass per second are converted to energy."
-      },
-      {
-        id: 7,
-        term: "Terrestrial Planets",
-        definition: "Mercury, Venus, Earth, and Mars – small, rocky, and dense."
-      },
-      {
-        id: 8,
-        term: "Jovian Planets",
-        definition:
-          "Jupiter, Saturn, Uranus, and Neptune – large, gaseous, low density, with many moons and ring systems."
-      },
-      {
-        id: 9,
-        term: "IAU Planet Criterion #1",
-        definition: "The object must orbit the Sun."
-      },
-      {
-        id: 10,
-        term: "IAU Planet Criterion #2",
-        definition:
-          "The object must be nearly spherical (in hydrostatic equilibrium)."
-      },
-      {
-        id: 11,
-        term: "IAU Planet Criterion #3",
-        definition:
-          "The object must have cleared its orbital neighborhood of other debris."
-      },
-      {
-        id: 12,
-        term: "Why Pluto Is Not a Planet",
-        definition:
-          "Pluto has not cleared its orbit of other debris and shares its region with many Kuiper Belt Objects."
-      },
-      {
-        id: 13,
-        term: "Pluto – Location",
-        definition: "Pluto orbits in the Kuiper Belt beyond Neptune."
-      },
-      {
-        id: 14,
-        term: "Pluto – Composition and Size",
-        definition:
-          "A small body made of rock and ice, smaller than Earth’s Moon, with a density of about 2 g/cm³."
-      },
-      {
-        id: 15,
-        term: "Trans-Neptunian Object (TNO)",
-        definition:
-          "A small icy object whose orbit lies beyond Neptune; Pluto is one example."
-      },
-      {
-        id: 16,
-        term: "Kuiper Belt Object (KBO)",
-        definition:
-          "An icy body in the Kuiper Belt (roughly 30–50 AU from the Sun), such as Pluto, Haumea, or Makemake."
-      },
-      {
-        id: 17,
-        term: "Plutino",
-        definition:
-          "A TNO in a 2:3 orbital resonance with Neptune; it orbits the Sun twice for every three Neptune orbits."
-      },
-      {
-        id: 18,
-        term: "Orbital Resonance",
-        definition:
-          "A condition where orbiting bodies exert regular gravitational influence because their orbital periods form a simple integer ratio."
-      },
-      {
-        id: 19,
-        term: "Asteroid",
-        definition:
-          "A rocky body, mostly found in the asteroid belt between Mars and Jupiter."
-      },
-      {
-        id: 20,
-        term: "Comet",
-        definition:
-          "An icy body that can develop a glowing coma and tail when it gets close to the Sun."
-      },
-      {
-        id: 21,
-        term: "Meteoroid, Meteor, Meteorite",
-        definition:
-          "Meteoroid: small debris in space. Meteor: the streak of light when it enters Earth’s atmosphere. Meteorite: the part that reaches the ground."
-      }
-    ];
+    <div class="app-shell">
+      <div class="top-row">
+        <div class="deck-label">
+          Deck: <strong>Quiz 7 – Moon, Stars &amp; Galaxies</strong>
+        </div>
+        <div class="pill">
+          Cards in deck:
+          <strong id="deck-count">0</strong>
+        </div>
+      </div>
 
-    document.getElementById("deck-count").textContent = flashcards.length;
+      <!-- MODE SWITCH -->
+      <div class="mode-switch">
+        <button class="mode-button mode-active" data-mode="flashcards">
+          Flashcards
+        </button>
+        <button class="mode-button" data-mode="matching">Matching</button>
+        <button class="mode-button" data-mode="quiz">Quiz</button>
+      </div>
 
-    // ==========================
-    //  LOCAL STORAGE PROGRESS
-    // ==========================
-    const STORAGE_KEY = "studyBuddyProgress_v1";
+      <!-- FILTERS -->
+      <div class="filter-row">
+        <button class="filter-button filter-active" data-filter="all">
+          All cards
+        </button>
+        <button class="filter-button" data-filter="unknown">
+          Only “Not yet”
+        </button>
+        <button class="filter-button" data-filter="known">
+          Only “Got it”
+        </button>
+      </div>
+      <div class="filter-note">
+        Filters apply to <strong>all modes</strong>. Progress is saved
+        automatically on this device.
+      </div>
 
-    function loadProgress() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return {};
-        return JSON.parse(raw) || {};
-      } catch (e) {
-        return {};
-      }
-    }
+      <!-- FLASHCARDS MODE -->
+      <div id="mode-flashcards" class="mode">
+        <div id="flashcard" class="card">
+          <div class="card-label" id="card-label">Term</div>
+          <div class="card-content" id="card-content"></div>
+          <div class="card-hint" id="card-hint">
+            Click card or press <kbd>Space</kbd> to flip.
+          </div>
+        </div>
 
-    function saveProgress() {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
-      } catch (e) {
-        // ignore
-      }
-    }
+        <div class="controls">
+          <button id="prev">◀ Prev</button>
+          <button id="flip" class="primary">Flip</button>
+          <button id="next">Next ▶</button>
+          <button id="shuffle">Shuffle</button>
+        </div>
 
-    // progress: { [id]: { status: "known" | "unknown" } }
-    const progress = loadProgress();
+        <div class="controls">
+          <button id="know" class="good">Got it ✅</button>
+          <button id="dontKnow" class="bad">Not yet ❌</button>
+          <button id="reset" class="subtle">Reset flashcard stats</button>
+        </div>
 
-    function getCardStatus(id) {
-      if (progress[id] && progress[id].status === "known") return "known";
-      return "unknown";
-    }
+        <div class="stats" id="stats"></div>
+      </div>
 
-    function setCardStatus(id, status) {
-      progress[id] = { status: status };
-      saveProgress();
-      updateActiveDeck();
-    }
+      <!-- MATCHING MODE -->
+      <div id="mode-matching" class="mode hidden">
+        <p class="subtitle">
+          Match each <strong>term</strong> on the left with the correct
+          <strong>definition</strong> on the right.
+        </p>
+        <div id="matching-container"></div>
+        <div class="controls">
+          <button id="matching-new" class="primary">New round</button>
+          <button id="matching-check">Check answers</button>
+        </div>
+        <div class="stats" id="matching-result"></div>
+      </div>
 
-    // ==========================
-    //  FILTERING
-    // ==========================
-    let currentFilter = "all"; // all | known | unknown
+      <!-- QUIZ MODE -->
+      <div id="mode-quiz" class="mode hidden">
+        <p class="subtitle">
+          Multiple-choice: pick the correct <strong>term</strong> for each
+          definition. Questions won’t repeat until you’ve seen them all.
+        </p>
 
-    const filterButtons = document.querySelectorAll(".filter-button");
-    filterButtons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        currentFilter = btn.dataset.filter;
-        filterButtons.forEach((b) =>
-          b.classList.toggle("filter-active", b === btn)
-        );
-        updateActiveDeck();
-        // also reset quiz deck so you don't quiz on old filter
-        initQuizDeck();
-        buildMatchingRound();
-        renderCard();
+        <div class="quiz-card">
+          <div class="quiz-question-label" id="quiz-round-label">Question</div>
+          <div class="quiz-question-text" id="quiz-question"></div>
+          <div class="quiz-options" id="quiz-options"></div>
+          <div class="quiz-feedback" id="quiz-feedback"></div>
+        </div>
+
+        <div class="controls">
+          <button id="quiz-next" class="primary">Next question</button>
+          <button id="quiz-retry" class="subtle">Retry missed questions</button>
+          <button id="quiz-reset" class="subtle">Reset quiz stats</button>
+        </div>
+        <div class="stats" id="quiz-stats"></div>
+      </div>
+
+      <p class="tagline">
+        Keyboard shortcuts in flashcards: <kbd>←</kbd>/<kbd>→</kbd> =
+        prev/next, <kbd>Space</kbd> = flip, <kbd>1</kbd> = Got it,
+        <kbd>2</kbd> = Not yet.
+      </p>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        (function () {
+          // ==========================
+          //  DATA – QUIZ 7 ONLY
+          // ==========================
+          const flashcards = [
+            // THE MOON
+            {
+              id: 1,
+              term: "Relative size of the Moon",
+              definition:
+                "Earth’s Moon is about one-quarter the diameter of Earth.",
+            },
+            {
+              id: 2,
+              term: "Why the Moon’s surface is so cratered",
+              definition:
+                "The Moon has almost no atmosphere, so there is no weather or erosion. Impact craters are not worn away and remain visible.",
+            },
+            {
+              id: 3,
+              term: "Cause of lunar phases",
+              definition:
+                "Lunar phases are caused by changing angles of sunlight as the Moon orbits Earth, letting us see different portions of the Moon’s sunlit half.",
+            },
+            {
+              id: 4,
+              term: "Lunar phases in order",
+              definition:
+                "New moon → waxing crescent → first quarter → waxing gibbous → full moon → waning gibbous → last quarter → waning crescent.",
+            },
+            {
+              id: 5,
+              term: "Length of the lunar phase cycle",
+              definition:
+                "About 29.5 days from one new moon to the next (the synodic month).",
+            },
+            {
+              id: 6,
+              term: "Reason one side of the Moon always faces Earth",
+              definition:
+                "The Moon is tidally locked: its rotation period and revolution period are the same, so the same hemisphere always faces Earth.",
+            },
+            {
+              id: 7,
+              term: "Near side vs. far side of the Moon",
+              definition:
+                "The near side always faces Earth. The so-called “dark side” is actually the far side—it receives sunlight too but is never visible from Earth.",
+            },
+            {
+              id: 8,
+              term: "Solar eclipse",
+              definition:
+                "Occurs when the Moon passes between Earth and the Sun and the Moon’s shadow falls on Earth, briefly blocking the Sun for some locations.",
+            },
+            {
+              id: 9,
+              term: "Lunar eclipse",
+              definition:
+                "Occurs when Earth passes between the Sun and the Moon and Earth’s shadow falls on the Moon, dimming it.",
+            },
+            {
+              id: 10,
+              term: "Why the Moon looks red during a lunar eclipse",
+              definition:
+                "Sunlight is bent through Earth’s atmosphere; the red light from all Earth’s sunrises and sunsets reaches the Moon, making it appear reddish.",
+            },
+            {
+              id: 11,
+              term: "Difference between phases and eclipses",
+              definition:
+                "Lunar phases happen every month due to changing Sun–Earth–Moon angles. Eclipses are rare line-ups where one body passes through another’s shadow.",
+            },
+
+            // NIGHT SKY / STARS
+            {
+              id: 12,
+              term: "Constellation",
+              definition:
+                "A pattern or group of stars as seen from Earth, often given mythological names, like Orion or Ursa Major.",
+            },
+            {
+              id: 13,
+              term: "Big Dipper and Ursa Major",
+              definition:
+                "The Big Dipper is an asterism (part of) the constellation Ursa Major, the Great Bear.",
+            },
+            {
+              id: 14,
+              term: "Pointer stars to Polaris",
+              definition:
+                "The two stars at the end of the Big Dipper’s bowl point in a straight line toward Polaris, the North Star.",
+            },
+            {
+              id: 15,
+              term: "Why constellations change with the seasons",
+              definition:
+                "As Earth orbits the Sun, our night side faces different directions in space at different times of year, so we see different constellations.",
+            },
+            {
+              id: 16,
+              term: "Why stars appear to move across the sky",
+              definition:
+                "Because Earth rotates on its axis, stars appear to move in arcs across the sky, generally counter-clockwise around Polaris in the Northern Hemisphere.",
+            },
+            {
+              id: 17,
+              term: "Why Polaris appears almost fixed in the sky",
+              definition:
+                "Earth’s rotation axis points nearly at Polaris, so it sits close to the pivot point of the apparent star rotation and hardly seems to move.",
+            },
+
+            // BRIGHTNESS, COLOR, AND STELLAR LIFE CYCLE
+            {
+              id: 18,
+              term: "Apparent brightness of a star",
+              definition:
+                "How bright a star appears from Earth, which depends on both its intrinsic luminosity and its distance from us.",
+            },
+            {
+              id: 19,
+              term: "Luminosity of a star",
+              definition:
+                "The total energy a star emits per second; its intrinsic brightness, independent of distance, often measured relative to the Sun.",
+            },
+            {
+              id: 20,
+              term: "Star color and temperature",
+              definition:
+                "Red stars are cooler, while blue stars are hotter. Color is a clue to a star’s surface temperature.",
+            },
+            {
+              id: 21,
+              term: "Nebula",
+              definition:
+                "A cold, dense cloud of gas and dust in space, often the birthplace of new stars.",
+            },
+            {
+              id: 22,
+              term: "Protostar",
+              definition:
+                "A forming star created when a nebula collapses under gravity and heats up, but nuclear fusion has not begun yet.",
+            },
+            {
+              id: 23,
+              term: "Main sequence star",
+              definition:
+                "A star in the long, stable phase of its life where hydrogen fusion in the core balances gravity; most stars, including the Sun, are here.",
+            },
+            {
+              id: 24,
+              term: "Red giant (low-mass star)",
+              definition:
+                "A later stage for a Sun-like star: it expands and cools at the surface, becoming very large and bright but relatively cool in temperature.",
+            },
+            {
+              id: 25,
+              term: "Planetary nebula and white dwarf",
+              definition:
+                "A dying low-mass star sheds its outer layers as a planetary nebula, leaving a small, hot, dense core behind called a white dwarf.",
+            },
+            {
+              id: 26,
+              term: "White dwarf properties",
+              definition:
+                "A small, extremely dense, hot stellar core (roughly Earth-sized) that no longer fuses fuel and slowly cools over time.",
+            },
+            {
+              id: 27,
+              term: "Supernova",
+              definition:
+                "A violent explosion marking the death of a massive star, blasting outer layers into space and creating many heavy elements.",
+            },
+            {
+              id: 28,
+              term: "Neutron star",
+              definition:
+                "The ultra-dense remnant of a massive star after a supernova, made mostly of tightly packed neutrons.",
+            },
+            {
+              id: 29,
+              term: "Black hole (stellar)",
+              definition:
+                "A collapsed remnant of a very massive star whose gravity is so strong that not even light can escape.",
+            },
+
+            // H-R DIAGRAM
+            {
+              id: 30,
+              term: "H–R diagram axes",
+              definition:
+                "A graph of stars with surface temperature on the x-axis (hotter on the left, cooler on the right) and luminosity on the y-axis (dim at bottom, bright at top).",
+            },
+            {
+              id: 31,
+              term: "Main sequence on the H–R diagram",
+              definition:
+                "A diagonal band from hot, bright stars (upper left) to cool, dim stars (lower right) where most stars, including the Sun, are found.",
+            },
+            {
+              id: 32,
+              term: "Giants and supergiants on the H–R diagram",
+              definition:
+                "These stars appear in the upper right: cool in temperature but very luminous, meaning they must be very large in size.",
+            },
+            {
+              id: 33,
+              term: "White dwarfs on the H–R diagram",
+              definition:
+                "Found in the lower left: hot but low in luminosity, which means they are very small and compact.",
+            },
+            {
+              id: 34,
+              term: "What astronomers learn from the H–R diagram",
+              definition:
+                "By plotting a star’s temperature and luminosity, astronomers can infer its size, stage in its life cycle, and how it compares to other stars.",
+            },
+
+            // GALAXIES
+            {
+              id: 35,
+              term: "Galaxy",
+              definition:
+                "A huge collection of stars, gas, dust, and dark matter held together by gravity.",
+            },
+            {
+              id: 36,
+              term: "Spiral galaxy",
+              definition:
+                "A galaxy with a flat disk, spiral arms, and a central bulge; rich in gas, dust, and young stars. The Milky Way is a barred spiral galaxy.",
+            },
+            {
+              id: 37,
+              term: "Elliptical galaxy",
+              definition:
+                "A galaxy shaped like an elongated sphere or football, containing mostly older, redder stars and little gas or dust.",
+            },
+            {
+              id: 38,
+              term: "Irregular galaxy",
+              definition:
+                "A galaxy with no clear shape, often small and disturbed by interactions or collisions with other galaxies.",
+            },
+            {
+              id: 39,
+              term: "Sun’s place in the Milky Way",
+              definition:
+                "The Sun is one ordinary star located in one of the Milky Way’s spiral arms, far from the galactic center.",
+            },
+          ];
+
+          document.getElementById("deck-count").textContent =
+            flashcards.length;
+
+          // ==========================
+          //  LOCAL STORAGE PROGRESS
+          // ==========================
+          const STORAGE_KEY = "studyBuddyQuiz7Progress_v1";
+
+          function loadProgress() {
+            try {
+              const raw = localStorage.getItem(STORAGE_KEY);
+              if (!raw) return {};
+              return JSON.parse(raw) || {};
+            } catch {
+              return {};
+            }
+          }
+
+          function saveProgress() {
+            try {
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+            } catch {
+              /* ignore */
+            }
+          }
+
+          // progress: { [id]: { status: "known" | "unknown" } }
+          const progress = loadProgress();
+
+          function getCardStatus(id) {
+            if (progress[id] && progress[id].status === "known") return "known";
+            return "unknown";
+          }
+
+          function setCardStatus(id, status) {
+            progress[id] = { status };
+            saveProgress();
+            updateActiveDeck();
+          }
+
+          // ==========================
+          //  FILTERING
+          // ==========================
+          let currentFilter = "all"; // all | known | unknown
+
+          const filterButtons = document.querySelectorAll(".filter-button");
+          filterButtons.forEach((btn) => {
+            btn.addEventListener("click", () => {
+              currentFilter = btn.dataset.filter;
+              filterButtons.forEach((b) =>
+                b.classList.toggle("filter-active", b === btn)
+              );
+              updateActiveDeck();
+              initQuizDeck(false);
+              buildMatchingRound();
+              renderCard();
+            });
+          });
+
+          function getActiveDeck() {
+            if (currentFilter === "all") return flashcards.slice();
+            return flashcards.filter(
+              (card) => getCardStatus(card.id) === currentFilter
+            );
+          }
+
+          let activeDeck = getActiveDeck();
+
+          function updateActiveDeck() {
+            activeDeck = getActiveDeck();
+            const deckCountEl = document.getElementById("deck-count");
+            if (activeDeck.length === 0) {
+              deckCountEl.textContent =
+                flashcards.length + " (no cards match filter)";
+            } else {
+              deckCountEl.textContent = activeDeck.length;
+            }
+          }
+
+          // ==========================
+          //  MODE SWITCHING
+          // ==========================
+          const modes = {
+            flashcards: document.getElementById("mode-flashcards"),
+            matching: document.getElementById("mode-matching"),
+            quiz: document.getElementById("mode-quiz"),
+          };
+
+          const modeButtons = document.querySelectorAll(".mode-button");
+          let currentMode = "flashcards";
+
+          function switchMode(modeName) {
+            currentMode = modeName;
+
+            Object.entries(modes).forEach(([name, el]) => {
+              el.classList.toggle("hidden", name !== modeName);
+            });
+
+            modeButtons.forEach((btn) => {
+              btn.classList.toggle(
+                "mode-active",
+                btn.dataset.mode === modeName
+              );
+            });
+
+            if (modeName === "matching") buildMatchingRound();
+            if (modeName === "quiz") initQuizQuestion();
+            if (modeName === "flashcards") renderCard();
+          }
+
+          modeButtons.forEach((btn) => {
+            btn.addEventListener("click", () => switchMode(btn.dataset.mode));
+          });
+
+          // ==========================
+          //  FLASHCARDS LOGIC
+          // ==========================
+          let currentIndex = 0; // index in activeDeck
+          let showingTerm = true;
+          let knownCount = 0;
+          let unknownCount = 0;
+          let reviewedCount = 0;
+
+          const cardEl = document.getElementById("flashcard");
+          const cardLabel = document.getElementById("card-label");
+          const cardContent = document.getElementById("card-content");
+          const cardHint = document.getElementById("card-hint");
+          const statsDiv = document.getElementById("stats");
+
+          function renderCard() {
+            if (activeDeck.length === 0) {
+              cardLabel.textContent = "No cards";
+              cardContent.textContent =
+                currentFilter === "known"
+                  ? "You haven’t marked any cards as Got it yet."
+                  : "You haven’t marked any cards as Not yet yet.";
+              cardHint.textContent = "Switch filter or study in All cards mode.";
+              statsDiv.textContent = "";
+              return;
+            }
+
+            if (currentIndex >= activeDeck.length) currentIndex = 0;
+
+            const card = activeDeck[currentIndex];
+            if (showingTerm) {
+              cardLabel.textContent = "Term";
+              cardContent.textContent = card.term;
+              cardHint.textContent = "Click or press Space to see the definition.";
+            } else {
+              cardLabel.textContent = "Definition";
+              cardContent.textContent = card.definition;
+              cardHint.textContent = "Click or press Space to go back to the term.";
+            }
+            updateFlashcardStats();
+          }
+
+          function updateFlashcardStats() {
+            statsDiv.innerHTML =
+              "<span>Card " +
+              (activeDeck.length === 0 ? 0 : currentIndex + 1) +
+              " / " +
+              activeDeck.length +
+              "</span>" +
+              "<span>Reviewed this session: " +
+              reviewedCount +
+              "</span>" +
+              "<span>Got it: " +
+              knownCount +
+              "</span>" +
+              "<span>Not yet: " +
+              unknownCount +
+              "</span>";
+          }
+
+          function nextCard() {
+            if (!activeDeck.length) return;
+            currentIndex = (currentIndex + 1) % activeDeck.length;
+            showingTerm = true;
+            renderCard();
+          }
+
+          function prevCard() {
+            if (!activeDeck.length) return;
+            currentIndex =
+              (currentIndex - 1 + activeDeck.length) % activeDeck.length;
+            showingTerm = true;
+            renderCard();
+          }
+
+          function flipCard() {
+            if (!activeDeck.length) return;
+            showingTerm = !showingTerm;
+            renderCard();
+          }
+
+          function shuffleCards() {
+            if (!activeDeck.length) return;
+            for (let i = activeDeck.length - 1; i > 0; i--) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [activeDeck[i], activeDeck[j]] = [activeDeck[j], activeDeck[i]];
+            }
+            currentIndex = 0;
+            showingTerm = true;
+            renderCard();
+          }
+
+          function markKnown() {
+            if (!activeDeck.length) return;
+            const card = activeDeck[currentIndex];
+            setCardStatus(card.id, "known");
+            knownCount++;
+            reviewedCount++;
+            updateActiveDeck();
+            activeDeck = getActiveDeck();
+            if (currentFilter === "unknown" && currentIndex >= activeDeck.length) {
+              currentIndex = 0;
+            }
+            nextCard();
+          }
+
+          function markUnknown() {
+            if (!activeDeck.length) return;
+            const card = activeDeck[currentIndex];
+            setCardStatus(card.id, "unknown");
+            unknownCount++;
+            reviewedCount++;
+            updateActiveDeck();
+            activeDeck = getActiveDeck();
+            if (currentFilter === "known" && currentIndex >= activeDeck.length) {
+              currentIndex = 0;
+            }
+            nextCard();
+          }
+
+          function resetFlashStats() {
+            knownCount = 0;
+            unknownCount = 0;
+            reviewedCount = 0;
+            updateFlashcardStats();
+          }
+
+          document.getElementById("next").addEventListener("click", nextCard);
+          document.getElementById("prev").addEventListener("click", prevCard);
+          document.getElementById("flip").addEventListener("click", flipCard);
+          document
+            .getElementById("shuffle")
+            .addEventListener("click", shuffleCards);
+          document.getElementById("know").addEventListener("click", markKnown);
+          document
+            .getElementById("dontKnow")
+            .addEventListener("click", markUnknown);
+          document
+            .getElementById("reset")
+            .addEventListener("click", resetFlashStats);
+          cardEl.addEventListener("click", flipCard);
+
+          document.addEventListener("keydown", (e) => {
+            if (currentMode !== "flashcards") return;
+            if (e.code === "ArrowRight") nextCard();
+            else if (e.code === "ArrowLeft") prevCard();
+            else if (e.code === "Space") {
+              e.preventDefault();
+              flipCard();
+            } else if (e.key === "1") markKnown();
+            else if (e.key === "2") markUnknown();
+          });
+
+          // ==========================
+          //  MATCHING MODE
+          // ==========================
+          const matchingContainer =
+            document.getElementById("matching-container");
+          const matchingResult = document.getElementById("matching-result");
+          const matchingNewBtn = document.getElementById("matching-new");
+          const matchingCheckBtn = document.getElementById("matching-check");
+
+          function getRandomSample(arr, count) {
+            const copy = arr.slice();
+            const result = [];
+            const target = Math.min(count, copy.length);
+            for (let i = 0; i < target; i++) {
+              const idx = Math.floor(Math.random() * copy.length);
+              result.push(copy.splice(idx, 1)[0]);
+            }
+            return result;
+          }
+
+          function buildMatchingRound() {
+            matchingContainer.innerHTML = "";
+            matchingResult.textContent = "";
+
+            let deck = getActiveDeck();
+            if (deck.length < 3) {
+              deck = flashcards.slice(); // fallback
+            }
+
+            const roundCards = getRandomSample(deck, 6);
+            const definitions = roundCards.map((c) => c.definition);
+
+            // shuffle definitions
+            for (let i = definitions.length - 1; i > 0; i--) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [definitions[i], definitions[j]] = [definitions[j], definitions[i]];
+            }
+
+            roundCards.forEach((card) => {
+              const row = document.createElement("div");
+              row.className = "matching-row";
+
+              const termDiv = document.createElement("div");
+              termDiv.className = "matching-term";
+              termDiv.textContent = card.term;
+              row.appendChild(termDiv);
+
+              const select = document.createElement("select");
+              select.className = "matching-select";
+              select.dataset.correctDefinition = card.definition;
+
+              const placeholder = document.createElement("option");
+              placeholder.value = "";
+              placeholder.textContent = "Select definition…";
+              placeholder.disabled = true;
+              placeholder.selected = true;
+              select.appendChild(placeholder);
+
+              definitions.forEach((def) => {
+                const opt = document.createElement("option");
+                opt.value = def;
+                opt.textContent =
+                  def.length > 120 ? def.slice(0, 120) + "…" : def;
+                select.appendChild(opt);
+              });
+
+              row.appendChild(select);
+              matchingContainer.appendChild(row);
+            });
+          }
+
+          function checkMatchingAnswers() {
+            const selects = matchingContainer.querySelectorAll("select");
+            if (!selects.length) return;
+
+            let correct = 0;
+            const total = selects.length;
+
+            selects.forEach((sel) => {
+              sel.classList.remove("correct", "incorrect");
+              if (!sel.value) return;
+              if (sel.value === sel.dataset.correctDefinition) {
+                correct++;
+                sel.classList.add("correct");
+              } else {
+                sel.classList.add("incorrect");
+              }
+            });
+
+            matchingResult.textContent =
+              "You matched " + correct + " out of " + total + ".";
+          }
+
+          matchingNewBtn.addEventListener("click", buildMatchingRound);
+          matchingCheckBtn.addEventListener("click", checkMatchingAnswers);
+
+          // ==========================
+          //  QUIZ MODE
+          // ==========================
+          const quizQuestionEl = document.getElementById("quiz-question");
+          const quizOptionsEl = document.getElementById("quiz-options");
+          const quizFeedbackEl = document.getElementById("quiz-feedback");
+          const quizStatsEl = document.getElementById("quiz-stats");
+          const quizNextBtn = document.getElementById("quiz-next");
+          const quizResetBtn = document.getElementById("quiz-reset");
+          const quizRetryBtn = document.getElementById("quiz-retry");
+          const quizRoundLabel = document.getElementById("quiz-round-label");
+
+          let quizCorrect = 0;
+          let quizTotal = 0;
+          let currentQuizAnswer = null;
+          let quizAnswered = false;
+
+          // deck of card ids used for quiz
+          let quizDeck = [];
+          let quizIndex = 0;
+
+          // missed questions
+          let missedIds = [];
+          let retryMode = false; // false = full deck, true = retry missed only
+
+          function shuffleArray(arr) {
+            const copy = arr.slice();
+            for (let i = copy.length - 1; i > 0; i--) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [copy[i], copy[j]] = [copy[j], copy[i]];
+            }
+            return copy;
+          }
+
+          function initQuizDeck(fromMissed) {
+            let deckSource;
+            if (fromMissed && missedIds.length > 0) {
+              deckSource = flashcards.filter((c) => missedIds.includes(c.id));
+            } else {
+              let deck = getActiveDeck();
+              if (deck.length < 4) deck = flashcards.slice();
+              deckSource = deck;
+            }
+            quizDeck = shuffleArray(deckSource.map((c) => c.id));
+            quizIndex = 0;
+          }
+
+          function getCardById(id) {
+            return flashcards.find((c) => c.id === id);
+          }
+
+          function initQuizQuestion() {
+            if (quizDeck.length === 0) {
+              initQuizDeck(retryMode);
+            }
+
+            if (quizDeck.length === 0) {
+              quizQuestionEl.textContent =
+                "No cards available for quiz. Try changing the filter.";
+              quizOptionsEl.innerHTML = "";
+              quizFeedbackEl.textContent = "";
+              return;
+            }
+
+            quizFeedbackEl.textContent = "";
+            quizFeedbackEl.className = "quiz-feedback";
+            quizAnswered = false;
+
+            if (quizIndex >= quizDeck.length) {
+              // Finished a cycle, reshuffle for the next
+              initQuizDeck(retryMode);
+            }
+
+            const cardId = quizDeck[quizIndex];
+            const card = getCardById(cardId);
+            currentQuizAnswer = card.term;
+
+            quizQuestionEl.textContent = card.definition;
+            quizRoundLabel.textContent = retryMode
+              ? "Retry round – missed questions"
+              : "Main round";
+
+            // Build options: correct + 3 random other terms
+            let pool = flashcards.filter((c) => c.id !== cardId);
+            pool = shuffleArray(pool);
+            const distractors = pool.slice(0, 3).map((c) => c.term);
+            const choices = shuffleArray([currentQuizAnswer, ...distractors]);
+
+            quizOptionsEl.innerHTML = "";
+            choices.forEach((choice) => {
+              const btn = document.createElement("button");
+              btn.className = "quiz-option";
+              btn.textContent = choice;
+              btn.addEventListener("click", () =>
+                handleQuizAnswer(btn, choice)
+              );
+              quizOptionsEl.appendChild(btn);
+            });
+
+            updateQuizStats();
+          }
+
+          function handleQuizAnswer(button, choice) {
+            if (quizAnswered) return;
+            quizAnswered = true;
+            quizTotal++;
+
+            const optionButtons = quizOptionsEl.querySelectorAll("button");
+            optionButtons.forEach((btn) => {
+              btn.disabled = true;
+              if (btn.textContent === currentQuizAnswer) {
+                btn.classList.add("correct");
+              }
+            });
+
+            const currentId = quizDeck[quizIndex];
+            if (choice === currentQuizAnswer) {
+              quizCorrect++;
+              quizFeedbackEl.textContent = "Correct! ✅";
+              quizFeedbackEl.classList.add("correct");
+              if (retryMode) {
+                missedIds = missedIds.filter((id) => id !== currentId);
+              }
+            } else {
+              quizFeedbackEl.textContent =
+                "Not quite. The correct answer was: " + currentQuizAnswer;
+              quizFeedbackEl.classList.add("incorrect");
+              button.classList.add("incorrect");
+              if (!missedIds.includes(currentId)) {
+                missedIds.push(currentId);
+              }
+            }
+
+            quizIndex++;
+            updateQuizStats();
+          }
+
+          function updateQuizStats() {
+            const pct =
+              quizTotal === 0
+                ? 0
+                : Math.round((quizCorrect / quizTotal) * 100);
+            const missedCount = missedIds.length;
+            quizStatsEl.textContent =
+              "Score: " +
+              quizCorrect +
+              "/" +
+              quizTotal +
+              " (" +
+              pct +
+              "% correct) • Missed: " +
+              missedCount +
+              (missedCount > 0
+                ? " (use “Retry missed questions” to regain points)"
+                : "");
+          }
+
+          quizNextBtn.addEventListener("click", () => {
+            initQuizQuestion();
+          });
+
+          quizResetBtn.addEventListener("click", () => {
+            quizCorrect = 0;
+            quizTotal = 0;
+            missedIds = [];
+            retryMode = false;
+            initQuizDeck(false);
+            updateQuizStats();
+            initQuizQuestion();
+          });
+
+          quizRetryBtn.addEventListener("click", () => {
+            if (missedIds.length === 0) {
+              quizFeedbackEl.textContent =
+                "You have no missed questions to retry yet. Keep quizzing!";
+              quizFeedbackEl.className = "quiz-feedback";
+              return;
+            }
+            quizCorrect = 0;
+            quizTotal = 0;
+            retryMode = true;
+            initQuizDeck(true);
+            updateQuizStats();
+            initQuizQuestion();
+          });
+
+          // ==========================
+          //  INITIALIZE
+          // ==========================
+          updateActiveDeck();
+          renderCard();
+          buildMatchingRound();
+          initQuizDeck(false);
+          initQuizQuestion();
+        })();
       });
-    });
-
-    function getActiveDeck() {
-      if (currentFilter === "all") return flashcards.slice();
-      return flashcards.filter((c) => getCardStatus(c.id) === currentFilter);
-    }
-
-    let activeDeck = getActiveDeck();
-
-    function updateActiveDeck() {
-      activeDeck = getActiveDeck();
-      // if current index points beyond this deck, wrap
-      if (activeDeck.length === 0) {
-        document.getElementById("deck-count").textContent =
-          flashcards.length + " (no cards match filter)";
-      } else {
-        document.getElementById("deck-count").textContent = activeDeck.length;
-      }
-    }
-
-    // ==========================
-    //  MODE SWITCHING
-    // ==========================
-    const modes = {
-      flashcards: document.getElementById("mode-flashcards"),
-      matching: document.getElementById("mode-matching"),
-      quiz: document.getElementById("mode-quiz")
-    };
-
-    const modeButtons = document.querySelectorAll(".mode-button");
-    let currentMode = "flashcards";
-
-    function switchMode(modeName) {
-      currentMode = modeName;
-      Object.entries(modes).forEach(([name, el]) => {
-        if (name === modeName) el.classList.remove("hidden");
-        else el.classList.add("hidden");
-      });
-
-      modeButtons.forEach((btn) => {
-        btn.classList.toggle("mode-active", btn.dataset.mode === modeName);
-      });
-
-      if (modeName === "matching") buildMatchingRound();
-      if (modeName === "quiz") initQuizQuestion();
-      if (modeName === "flashcards") renderCard();
-    }
-
-    modeButtons.forEach((btn) => {
-      btn.addEventListener("click", () => switchMode(btn.dataset.mode));
-    });
-
-    // ==========================
-    //  FLASHCARDS LOGIC
-    // ==========================
-    let currentIndex = 0; // index in activeDeck
-    let showingTerm = true;
-    let knownCount = 0;
-    let unknownCount = 0;
-    let reviewedCount = 0;
-
-    const cardEl = document.getElementById("flashcard");
-    const cardLabel = document.getElementById("card-label");
-    const cardContent = document.getElementById("card-content");
-    const cardHint = document.getElementById("card-hint");
-    const statsDiv = document.getElementById("stats");
-
-    function renderCard() {
-      if (activeDeck.length === 0) {
-        cardLabel.textContent = "No cards";
-        cardContent.textContent =
-          currentFilter === "known"
-            ? "You haven’t marked any cards as Got it yet."
-            : "You haven’t marked any cards as Not yet yet.";
-        cardHint.textContent = "Switch filter or study in All cards mode.";
-        statsDiv.textContent = "";
-        return;
-      }
-
-      if (currentIndex >= activeDeck.length) currentIndex = 0;
-
-      const fc = activeDeck[currentIndex];
-      if (showingTerm) {
-        cardLabel.textContent = "Term";
-        cardContent.textContent = fc.term;
-        cardHint.textContent = "Click or press Space to see the definition.";
-      } else {
-        cardLabel.textContent = "Definition";
-        cardContent.textContent = fc.definition;
-        cardHint.textContent = "Click or press Space to go back to the term.";
-      }
-      updateFlashcardStats();
-    }
-
-    function updateFlashcardStats() {
-      statsDiv.innerHTML =
-        "<span>Card " +
-        (activeDeck.length === 0 ? 0 : currentIndex + 1) +
-        " / " +
-        activeDeck.length +
-        "</span>" +
-        "<span>Reviewed this session: " +
-        reviewedCount +
-        "</span>" +
-        "<span>Got it: " +
-        knownCount +
-        "</span>" +
-        "<span>Not yet: " +
-        unknownCount +
-        "</span>";
-    }
-
-    function nextCard() {
-      if (activeDeck.length === 0) return;
-      currentIndex = (currentIndex + 1) % activeDeck.length;
-      showingTerm = true;
-      renderCard();
-    }
-
-    function prevCard() {
-      if (activeDeck.length === 0) return;
-      currentIndex =
-        (currentIndex - 1 + activeDeck.length) % activeDeck.length;
-      showingTerm = true;
-      renderCard();
-    }
-
-    function flipCard() {
-      if (activeDeck.length === 0) return;
-      showingTerm = !showingTerm;
-      renderCard();
-    }
-
-    function shuffleCards() {
-      if (activeDeck.length === 0) return;
-      for (let i = activeDeck.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        const tmp = activeDeck[i];
-        activeDeck[i] = activeDeck[j];
-        activeDeck[j] = tmp;
-      }
-      currentIndex = 0;
-      showingTerm = true;
-      renderCard();
-    }
-
-    function markKnown() {
-      if (activeDeck.length === 0) return;
-      const fc = activeDeck[currentIndex];
-      setCardStatus(fc.id, "known");
-      knownCount++;
-      reviewedCount++;
-      updateActiveDeck();
-      activeDeck = getActiveDeck(); // refresh after status change
-      if (currentFilter === "unknown") {
-        // card just left this deck
-        if (currentIndex >= activeDeck.length) currentIndex = 0;
-      }
-      nextCard();
-    }
-
-    function markUnknown() {
-      if (activeDeck.length === 0) return;
-      const fc = activeDeck[currentIndex];
-      setCardStatus(fc.id, "unknown");
-      unknownCount++;
-      reviewedCount++;
-      updateActiveDeck();
-      activeDeck = getActiveDeck();
-      if (currentFilter === "known") {
-        if (currentIndex >= activeDeck.length) currentIndex = 0;
-      }
-      nextCard();
-    }
-
-    function resetFlashStats() {
-      knownCount = 0;
-      unknownCount = 0;
-      reviewedCount = 0;
-      updateFlashcardStats();
-    }
-
-    document.getElementById("next").addEventListener("click", nextCard);
-    document.getElementById("prev").addEventListener("click", prevCard);
-    document.getElementById("flip").addEventListener("click", flipCard);
-    document.getElementById("shuffle").addEventListener("click", shuffleCards);
-    document.getElementById("know").addEventListener("click", markKnown);
-    document
-      .getElementById("dontKnow")
-      .addEventListener("click", markUnknown);
-    document.getElementById("reset").addEventListener("click", resetFlashStats);
-    cardEl.addEventListener("click", flipCard);
-
-    document.addEventListener("keydown", (e) => {
-      if (currentMode !== "flashcards") return;
-      if (e.code === "ArrowRight") nextCard();
-      else if (e.code === "ArrowLeft") prevCard();
-      else if (e.code === "Space") {
-        e.preventDefault();
-        flipCard();
-      } else if (e.key === "1") markKnown();
-      else if (e.key === "2") markUnknown();
-    });
-
-    // ==========================
-    //  MATCHING MODE
-    // ==========================
-    const matchingContainer = document.getElementById("matching-container");
-    const matchingResult = document.getElementById("matching-result");
-    const matchingNewBtn = document.getElementById("matching-new");
-    const matchingCheckBtn = document.getElementById("matching-check");
-
-    function getRandomSample(arr, count) {
-      const copy = arr.slice();
-      const result = [];
-      count = Math.min(count, copy.length);
-      for (let i = 0; i < count; i++) {
-        const idx = Math.floor(Math.random() * copy.length);
-        result.push(copy.splice(idx, 1)[0]);
-      }
-      return result;
-    }
-
-    function buildMatchingRound() {
-      matchingContainer.innerHTML = "";
-      matchingResult.textContent = "";
-
-      let deck = getActiveDeck();
-      if (deck.length < 3) {
-        deck = flashcards.slice(); // fallback so the game still works
-      }
-
-      const roundCards = getRandomSample(deck, 6);
-      const definitions = roundCards.map((c) => c.definition);
-
-      for (let i = definitions.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        const tmp = definitions[i];
-        definitions[i] = definitions[j];
-        definitions[j] = tmp;
-      }
-
-      roundCards.forEach((cardData) => {
-        const row = document.createElement("div");
-        row.className = "matching-row";
-
-        const termDiv = document.createElement("div");
-        termDiv.className = "matching-term";
-        termDiv.textContent = cardData.term;
-        row.appendChild(termDiv);
-
-        const select = document.createElement("select");
-        select.className = "matching-select";
-        select.dataset.correctDefinition = cardData.definition;
-
-        const placeholder = document.createElement("option");
-        placeholder.value = "";
-        placeholder.textContent = "Select definition…";
-        placeholder.disabled = true;
-        placeholder.selected = true;
-        select.appendChild(placeholder);
-
-        definitions.forEach((def) => {
-          const opt = document.createElement("option");
-          opt.value = def;
-          opt.textContent = def.length > 120 ? def.slice(0, 120) + "…" : def;
-          select.appendChild(opt);
-        });
-
-        row.appendChild(select);
-        matchingContainer.appendChild(row);
-      });
-    }
-
-    function checkMatchingAnswers() {
-      const selects = matchingContainer.querySelectorAll("select");
-      if (!selects.length) return;
-
-      let correct = 0;
-      let total = selects.length;
-
-      selects.forEach((sel) => {
-        sel.classList.remove("correct", "incorrect");
-        if (!sel.value) return;
-        if (sel.value === sel.dataset.correctDefinition) {
-          correct++;
-          sel.classList.add("correct");
-        } else {
-          sel.classList.add("incorrect");
-        }
-      });
-
-      matchingResult.textContent =
-        "You matched " + correct + " out of " + total + ".";
-    }
-
-    matchingNewBtn.addEventListener("click", buildMatchingRound);
-    matchingCheckBtn.addEventListener("click", checkMatchingAnswers);
-
-    // ==========================
-    //  QUIZ MODE
-    // ==========================
-    const quizQuestionEl = document.getElementById("quiz-question");
-    const quizOptionsEl = document.getElementById("quiz-options");
-    const quizFeedbackEl = document.getElementById("quiz-feedback");
-    const quizStatsEl = document.getElementById("quiz-stats");
-    const quizNextBtn = document.getElementById("quiz-next");
-    const quizResetBtn = document.getElementById("quiz-reset");
-    const quizRetryBtn = document.getElementById("quiz-retry");
-    const quizRoundLabel = document.getElementById("quiz-round-label");
-
-    let quizCorrect = 0;
-    let quizTotal = 0;
-    let currentQuizAnswer = null;
-    let quizAnswered = false;
-
-    // To prevent repeats we keep a shuffled pool of card ids.
-    let quizDeck = [];
-    let quizIndex = 0;
-
-    // Missed cards for "second chance" round
-    let missedIds = [];
-    let retryMode = false; // false = full deck, true = retry missed only
-
-    function shuffleArray(arr) {
-      const copy = arr.slice();
-      for (let i = copy.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        const tmp = copy[i];
-        copy[i] = copy[j];
-        copy[j] = tmp;
-      }
-      return copy;
-    }
-
-    function initQuizDeck(fromMissed) {
-      let deckSource;
-      if (fromMissed && missedIds.length > 0) {
-        deckSource = flashcards.filter((c) => missedIds.includes(c.id));
-      } else {
-        let deck = getActiveDeck();
-        if (deck.length < 4) deck = flashcards.slice();
-        deckSource = deck;
-      }
-      quizDeck = shuffleArray(deckSource.map((c) => c.id));
-      quizIndex = 0;
-    }
-
-    function getCardById(id) {
-      return flashcards.find((c) => c.id === id);
-    }
-
-    function initQuizQuestion() {
-      if (quizDeck.length === 0) {
-        initQuizDeck(retryMode);
-      }
-
-      if (quizDeck.length === 0) {
-        quizQuestionEl.textContent =
-          "No cards available for quiz. Try changing the filter.";
-        quizOptionsEl.innerHTML = "";
-        quizFeedbackEl.textContent = "";
-        return;
-      }
-
-      quizFeedbackEl.textContent = "";
-      quizFeedbackEl.className = "quiz-feedback";
-      quizAnswered = false;
-
-      if (quizIndex >= quizDeck.length) {
-        // Completed a cycle, reshuffle to avoid repeats in the next round
-        initQuizDeck(retryMode);
-      }
-
-      const cardId = quizDeck[quizIndex];
-      const cardData = getCardById(cardId);
-      currentQuizAnswer = cardData.term;
-
-      quizQuestionEl.textContent = cardData.definition;
-      quizRoundLabel.textContent = retryMode
-        ? "Retry round – missed questions"
-        : "Main round";
-
-      // Build options: correct + 3 random other terms
-      let deck = flashcards.filter((c) => c.id !== cardId);
-      deck = shuffleArray(deck);
-      const distractors = deck.slice(0, 3).map((c) => c.term);
-      const choices = shuffleArray([currentQuizAnswer].concat(distractors));
-
-      quizOptionsEl.innerHTML = "";
-      choices.forEach((choice) => {
-        const btn = document.createElement("button");
-        btn.className = "quiz-option";
-        btn.textContent = choice;
-        btn.addEventListener("click", () => handleQuizAnswer(btn, choice));
-        quizOptionsEl.appendChild(btn);
-      });
-
-      updateQuizStats();
-    }
-
-    function handleQuizAnswer(button, choice) {
-      if (quizAnswered) return;
-      quizAnswered = true;
-      quizTotal++;
-
-      const optionButtons = quizOptionsEl.querySelectorAll("button");
-      optionButtons.forEach((btn) => {
-        btn.disabled = true;
-        if (btn.textContent === currentQuizAnswer) {
-          btn.classList.add("correct");
-        }
-      });
-
-      const currentId = quizDeck[quizIndex];
-      if (choice === currentQuizAnswer) {
-        quizCorrect++;
-        quizFeedbackEl.textContent = "Correct! ✅";
-        quizFeedbackEl.classList.add("correct");
-        // If they got it right in a retry round, remove from missedIds
-        if (retryMode) {
-          missedIds = missedIds.filter((id) => id !== currentId);
-        }
-      } else {
-        quizFeedbackEl.textContent =
-          "Not quite. The correct answer was: " + currentQuizAnswer;
-        quizFeedbackEl.classList.add("incorrect");
-        button.classList.add("incorrect");
-        if (!missedIds.includes(currentId)) {
-          missedIds.push(currentId);
-        }
-      }
-
-      quizIndex++;
-      updateQuizStats();
-    }
-
-    function updateQuizStats() {
-      const pct =
-        quizTotal === 0 ? 0 : Math.round((quizCorrect / quizTotal) * 100);
-      const missedCount = missedIds.length;
-      quizStatsEl.textContent =
-        "Score: " +
-        quizCorrect +
-        "/" +
-        quizTotal +
-        " (" +
-        pct +
-        "% correct) • Missed: " +
-        missedCount +
-        (missedCount > 0
-          ? " (use “Retry missed questions” to regain points)"
-          : "");
-    }
-
-    quizNextBtn.addEventListener("click", () => {
-      initQuizQuestion();
-    });
-
-    quizResetBtn.addEventListener("click", () => {
-      quizCorrect = 0;
-      quizTotal = 0;
-      missedIds = [];
-      retryMode = false;
-      initQuizDeck(false);
-      updateQuizStats();
-      initQuizQuestion();
-    });
-
-    quizRetryBtn.addEventListener("click", () => {
-      if (missedIds.length === 0) {
-        quizFeedbackEl.textContent =
-          "You have no missed questions to retry yet. Keep quizzing!";
-        quizFeedbackEl.className = "quiz-feedback";
-        return;
-      }
-      quizCorrect = 0;
-      quizTotal = 0;
-      retryMode = true;
-      initQuizDeck(true);
-      updateQuizStats();
-      initQuizQuestion();
-    });
-
-    // ==========================
-    //  INITIALIZE
-    // ==========================
-    updateActiveDeck();
-    renderCard();
-    buildMatchingRound();
-    initQuizDeck(false);
-    initQuizQuestion();
-  </script>
-</body>
+    </script>
+  </body>
 </html>
