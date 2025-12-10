@@ -222,13 +222,65 @@
       document.addEventListener("DOMContentLoaded", () => {
         (function () {
           const flashcards = [
-            // PHYSICS, EARTH SCIENCE, ASTRONOMY content will go here
+            // PHYSICS: NEWTON'S LAWS
+            { id: 1, term: "Newton’s First Law (Inertia)", definition: "An object at rest stays at rest and an object in motion stays in motion unless acted on by a net external force." },
+            { id: 2, term: "Newton’s Second Law (Acceleration)", definition: "Net force causes acceleration: F = m·a. More force → more acceleration; more mass → less acceleration." },
+            { id: 3, term: "Newton’s Third Law (Action–Reaction)", definition: "For every action force, there is an equal and opposite reaction force." },
+            { id: 4, term: "Impulse", definition: "Impulse = Force × Time; changes momentum." },
+            { id: 5, term: "Momentum", definition: "Momentum = mass × velocity. Describes how hard an object is to stop." },
+            { id: 6, term: "Work", definition: "Work = Force × Distance. Work is done when a force causes displacement." },
+            { id: 7, term: "Power", definition: "Power = Work / Time. Power is the rate of doing work." },
+            { id: 8, term: "Kinetic Energy", definition: "Energy of motion, commonly KE = 1/2 m v²." },
+            { id: 9, term: "Potential Energy", definition: "Stored energy due to position or condition, such as gravitational potential energy." },
+            { id: 10, term: "Universal Law of Gravitation", definition: "All masses attract each other; force depends on masses and distance: F ∝ m1·m2 / r²." },
+            { id: 11, term: "Inverse Square Law", definition: "Gravitational force decreases with the square of the distance: doubling r makes force 1/4 as strong." },
+            
+            // EARTH SCIENCE: OCEANS
+            { id: 12, term: "Salinity", definition: "Amount of dissolved salts in seawater; affects density and circulation." },
+            { id: 13, term: "Ocean Tides", definition: "Daily sea-level changes mainly caused by the Moon’s gravity, with the Sun also contributing." },
+
+            // EARTH SCIENCE: ATMOSPHERE
+            { id: 14, term: "Layers of the Atmosphere", definition: "Troposphere, stratosphere, mesosphere, thermosphere, exosphere (ordered from ground up)." },
+            { id: 15, term: "Solar Radiation", definition: "Incoming energy from the Sun, shorter wavelength, heats Earth." },
+            { id: 16, term: "Terrestrial Radiation", definition: "Energy Earth re-emits back to space, longer wavelength (infrared)." },
+            { id: 17, term: "Seasons", definition: "Caused by Earth’s 23.5° axial tilt and revolution around the Sun, changing sunlight angle and day length." },
+            { id: 18, term: "Convection Cycle", definition: "Warm, less-dense air rises; cool, denser air sinks, creating circulation in atmosphere/oceans." },
+
+            // EARTH SCIENCE: WEATHER & CLIMATE
+            { id: 19, term: "Weather", definition: "Day-to-day state of the atmosphere (temperature, precipitation, wind, etc.)." },
+            { id: 20, term: "Climate", definition: "Average weather conditions over 30+ years for a region." },
+            { id: 21, term: "Climate Change", definition: "Long-term shift in climate patterns; driven by natural and human causes, with modern influence from greenhouse gases." },
+            { id: 22, term: "Sea Level Rise", definition: "Increase in global sea level due to melting ice and thermal expansion of warming water." },
+            { id: 23, term: "Humidity", definition: "Amount of water vapor in the air." },
+            { id: 24, term: "Dew Point", definition: "Temperature at which air becomes saturated and condensation begins." },
+
+            // ASTRONOMY: SOLAR SYSTEM
+            { id: 25, term: "Nebular Theory", definition: "Solar system formed from a rotating cloud of gas/dust that collapsed, flattened, and formed the Sun and planets." },
+            { id: 26, term: "Inner Planets", definition: "Mercury, Venus, Earth, Mars: small, rocky, dense, closer to the Sun, shorter orbital periods." },
+            { id: 27, term: "Outer Planets", definition: "Jupiter, Saturn, Uranus, Neptune: large, gas/ice giants, less dense, farther from the Sun, longer orbital periods." },
+            { id: 28, term: "Comets", definition: "Icy bodies that orbit the Sun, developing tails when near the Sun." },
+            { id: 29, term: "Asteroids", definition: "Rocky/metallic objects orbiting the Sun, mostly in the asteroid belt." },
+            
+            // ASTRONOMY: STARS & GALAXIES
+            { id: 30, term: "Star Life Cycle", definition: "Nebula → protostar → main sequence → (low mass: red giant → planetary nebula → white dwarf) OR (high mass: supergiant → supernova → neutron star/black hole)." },
+            { id: 31, term: "Supernova", definition: "Explosive death of a massive star creating heavy elements and a stellar remnant." },
+            { id: 32, term: "H–R Diagram", definition: "Plot of luminosity vs temperature; shows main sequence, giants/supergiants, and white dwarfs." },
+            { id: 33, term: "Black Hole", definition: "Collapsed core of a massive star; gravity so strong that light cannot escape." },
+            { id: 34, term: "Spiral Galaxy", definition: "Disk-shaped galaxies with spiral arms, star formation, and gas/dust (Milky Way type)." },
+            { id: 35, term: "Elliptical Galaxy", definition: "Round/oval galaxies with mostly old stars and little gas/dust." },
+
+            // ASTRONOMY: EXPANSION & BIG BANG
+            { id: 36, term: "Big Bang Theory", definition: "The universe began hot and dense and has been expanding ever since." },
+            { id: 37, term: "Hubble’s Law", definition: "Galaxy recession speed proportional to distance: v = H₀ d." },
+            { id: 38, term: "Cosmic Microwave Background", definition: "Leftover faint radiation from the early hot universe, observed everywhere." },
+            { id: 39, term: "Redshift / Blueshift", definition: "Redshift = longer wavelength (moving away). Blueshift = shorter wavelength (moving toward)." },
+            { id: 40, term: "Light-year", definition: "Distance light travels in one year; used for cosmic distances." }
           ];
 
-          document.getElementById("deck-count").textContent = flashcards.length;
-
+          // ==========================
+          //  LOCAL STORAGE PROGRESS
+          // ==========================
           const STORAGE_KEY = "studyBuddyMajorConceptsProgress_v1";
-          const progress = loadProgress();
 
           function loadProgress() {
             try {
@@ -248,6 +300,8 @@
             }
           }
 
+          const progress = loadProgress();
+
           function getCardStatus(id) {
             if (progress[id] && progress[id].status === "known") return "known";
             return "unknown";
@@ -259,8 +313,469 @@
             updateActiveDeck();
           }
 
-          // Rest of the app logic (modes, flashcards, quiz handling, etc.) will go here.
+          // ==========================
+          //  FILTERING
+          // ==========================
+          let currentFilter = "all";
 
+          const filterButtons = document.querySelectorAll(".filter-button");
+          filterButtons.forEach((btn) => {
+            btn.addEventListener("click", () => {
+              currentFilter = btn.dataset.filter;
+              filterButtons.forEach((b) =>
+                b.classList.toggle("filter-active", b === btn)
+              );
+              updateActiveDeck();
+              initQuizDeck(false);
+              buildMatchingRound();
+              renderCard();
+            });
+          });
+
+          function getActiveDeck() {
+            if (currentFilter === "all") return flashcards.slice();
+            return flashcards.filter(
+              (card) => getCardStatus(card.id) === currentFilter
+            );
+          }
+
+          let activeDeck = getActiveDeck();
+
+          function updateActiveDeck() {
+            activeDeck = getActiveDeck();
+            const deckCountEl = document.getElementById("deck-count");
+            deckCountEl.textContent =
+              activeDeck.length === 0
+                ? flashcards.length + " (no cards match filter)"
+                : activeDeck.length;
+          }
+
+          // ==========================
+          //  MODE SWITCHING
+          // ==========================
+          const modes = {
+            flashcards: document.getElementById("mode-flashcards"),
+            matching: document.getElementById("mode-matching"),
+            quiz: document.getElementById("mode-quiz"),
+          };
+
+          const modeButtons = document.querySelectorAll(".mode-button");
+          let currentMode = "flashcards";
+
+          function switchMode(modeName) {
+            currentMode = modeName;
+
+            Object.entries(modes).forEach(([name, el]) => {
+              el.classList.toggle("hidden", name !== modeName);
+            });
+
+            modeButtons.forEach((btn) => {
+              btn.classList.toggle("mode-active", btn.dataset.mode === modeName);
+            });
+
+            if (modeName === "matching") buildMatchingRound();
+            if (modeName === "quiz") initQuizQuestion();
+            if (modeName === "flashcards") renderCard();
+          }
+
+          modeButtons.forEach((btn) => {
+            btn.addEventListener("click", () => switchMode(btn.dataset.mode));
+          });
+
+          // ==========================
+          //  FLASHCARDS LOGIC
+          // ==========================
+          let currentIndex = 0;
+          let showingTerm = true;
+          let knownCount = 0;
+          let unknownCount = 0;
+          let reviewedCount = 0;
+
+          const cardEl = document.getElementById("flashcard");
+          const cardLabel = document.getElementById("card-label");
+          const cardContent = document.getElementById("card-content");
+          const cardHint = document.getElementById("card-hint");
+          const statsDiv = document.getElementById("stats");
+
+          function renderCard() {
+            if (activeDeck.length === 0) {
+              cardLabel.textContent = "No cards";
+              cardContent.textContent =
+                currentFilter === "known"
+                  ? "You haven’t marked any cards as Got it yet."
+                  : "You haven’t marked any cards as Not yet yet.";
+              cardHint.textContent = "Switch filter or study in All cards mode.";
+              statsDiv.textContent = "";
+              return;
+            }
+
+            if (currentIndex >= activeDeck.length) currentIndex = 0;
+
+            const card = activeDeck[currentIndex];
+            if (showingTerm) {
+              cardLabel.textContent = "Term";
+              cardContent.textContent = card.term;
+              cardHint.textContent = "Click or press Space to see the definition.";
+            } else {
+              cardLabel.textContent = "Definition";
+              cardContent.textContent = card.definition;
+              cardHint.textContent = "Click or press Space to go back to the term.";
+            }
+            updateFlashcardStats();
+          }
+
+          function updateFlashcardStats() {
+            statsDiv.innerHTML =
+              "<span>Card " +
+              (activeDeck.length === 0 ? 0 : currentIndex + 1) +
+              " / " +
+              activeDeck.length +
+              "</span>" +
+              "<span>Reviewed this session: " +
+              reviewedCount +
+              "</span>" +
+              "<span>Got it: " +
+              knownCount +
+              "</span>" +
+              "<span>Not yet: " +
+              unknownCount +
+              "</span>";
+          }
+
+          function nextCard() {
+            if (!activeDeck.length) return;
+            currentIndex = (currentIndex + 1) % activeDeck.length;
+            showingTerm = true;
+            renderCard();
+          }
+
+          function prevCard() {
+            if (!activeDeck.length) return;
+            currentIndex = (currentIndex - 1 + activeDeck.length) % activeDeck.length;
+            showingTerm = true;
+            renderCard();
+          }
+
+          function flipCard() {
+            if (!activeDeck.length) return;
+            showingTerm = !showingTerm;
+            renderCard();
+          }
+
+          function shuffleCards() {
+            if (!activeDeck.length) return;
+            for (let i = activeDeck.length - 1; i > 0; i--) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [activeDeck[i], activeDeck[j]] = [activeDeck[j], activeDeck[i]];
+            }
+            currentIndex = 0;
+            showingTerm = true;
+            renderCard();
+          }
+
+          function markKnown() {
+            if (!activeDeck.length) return;
+            const card = activeDeck[currentIndex];
+            setCardStatus(card.id, "known");
+            knownCount++;
+            reviewedCount++;
+            updateActiveDeck();
+            activeDeck = getActiveDeck();
+            if (currentFilter === "unknown" && currentIndex >= activeDeck.length) {
+              currentIndex = 0;
+            }
+            nextCard();
+          }
+
+          function markUnknown() {
+            if (!activeDeck.length) return;
+            const card = activeDeck[currentIndex];
+            setCardStatus(card.id, "unknown");
+            unknownCount++;
+            reviewedCount++;
+            updateActiveDeck();
+            activeDeck = getActiveDeck();
+            if (currentFilter === "known" && currentIndex >= activeDeck.length) {
+              currentIndex = 0;
+            }
+            nextCard();
+          }
+
+          function resetFlashStats() {
+            knownCount = 0;
+            unknownCount = 0;
+            reviewedCount = 0;
+            updateFlashcardStats();
+          }
+
+          document.getElementById("next").addEventListener("click", nextCard);
+          document.getElementById("prev").addEventListener("click", prevCard);
+          document.getElementById("flip").addEventListener("click", flipCard);
+          document.getElementById("shuffle").addEventListener("click", shuffleCards);
+          document.getElementById("know").addEventListener("click", markKnown);
+          document.getElementById("dontKnow").addEventListener("click", markUnknown);
+          document.getElementById("reset").addEventListener("click", resetFlashStats);
+          cardEl.addEventListener("click", flipCard);
+
+          document.addEventListener("keydown", (e) => {
+            if (currentMode !== "flashcards") return;
+            if (e.code === "ArrowRight") nextCard();
+            else if (e.code === "ArrowLeft") prevCard();
+            else if (e.code === "Space") {
+              e.preventDefault();
+              flipCard();
+            } else if (e.key === "1") markKnown();
+            else if (e.key === "2") markUnknown();
+          });
+
+          // ==========================
+          //  MATCHING MODE
+          // ==========================
+          const matchingContainer = document.getElementById("matching-container");
+          const matchingResult = document.getElementById("matching-result");
+          const matchingNewBtn = document.getElementById("matching-new");
+          const matchingCheckBtn = document.getElementById("matching-check");
+
+          function getRandomSample(arr, count) {
+            const copy = arr.slice();
+            const result = [];
+            const target = Math.min(count, copy.length);
+            for (let i = 0; i < target; i++) {
+              const idx = Math.floor(Math.random() * copy.length);
+              result.push(copy.splice(idx, 1)[0]);
+            }
+            return result;
+          }
+
+          function buildMatchingRound() {
+            matchingContainer.innerHTML = "";
+            matchingResult.textContent = "";
+
+            let deck = getActiveDeck();
+            if (deck.length < 3) deck = flashcards.slice();
+
+            const roundCards = getRandomSample(deck, 6);
+            const definitions = roundCards.map((c) => c.definition);
+
+            for (let i = definitions.length - 1; i > 0; i--) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [definitions[i], definitions[j]] = [definitions[j], definitions[i]];
+            }
+
+            roundCards.forEach((card) => {
+              const row = document.createElement("div");
+              row.className = "matching-row";
+
+              const termDiv = document.createElement("div");
+              termDiv.className = "matching-term";
+              termDiv.textContent = card.term;
+              row.appendChild(termDiv);
+
+              const select = document.createElement("select");
+              select.className = "matching-select";
+              select.dataset.correctDefinition = card.definition;
+
+              const placeholder = document.createElement("option");
+              placeholder.value = "";
+              placeholder.textContent = "Select definition…";
+              placeholder.disabled = true;
+              placeholder.selected = true;
+              select.appendChild(placeholder);
+
+              definitions.forEach((def) => {
+                const opt = document.createElement("option");
+                opt.value = def;
+                opt.textContent = def.length > 120 ? def.slice(0, 120) + "…" : def;
+                select.appendChild(opt);
+              });
+
+              row.appendChild(select);
+              matchingContainer.appendChild(row);
+            });
+          }
+
+          function checkMatchingAnswers() {
+            const selects = matchingContainer.querySelectorAll("select");
+            if (!selects.length) return;
+
+            let correct = 0;
+            const total = selects.length;
+
+            selects.forEach((sel) => {
+              sel.classList.remove("correct", "incorrect");
+              if (!sel.value) return;
+              if (sel.value === sel.dataset.correctDefinition) {
+                correct++;
+                sel.classList.add("correct");
+              } else {
+                sel.classList.add("incorrect");
+              }
+            });
+
+            matchingResult.textContent = "You matched " + correct + " out of " + total + ".";
+          }
+
+          matchingNewBtn.addEventListener("click", buildMatchingRound);
+          matchingCheckBtn.addEventListener("click", checkMatchingAnswers);
+
+          // ==========================
+          //  QUIZ MODE
+          // ==========================
+          const quizQuestionEl = document.getElementById("quiz-question");
+          const quizOptionsEl = document.getElementById("quiz-options");
+          const quizFeedbackEl = document.getElementById("quiz-feedback");
+          const quizStatsEl = document.getElementById("quiz-stats");
+          const quizNextBtn = document.getElementById("quiz-next");
+          const quizResetBtn = document.getElementById("quiz-reset");
+          const quizRetryBtn = document.getElementById("quiz-retry");
+          const quizRoundLabel = document.getElementById("quiz-round-label");
+
+          let quizCorrect = 0;
+          let quizTotal = 0;
+          let currentQuizAnswer = null;
+          let quizAnswered = false;
+
+          let quizDeck = [];
+          let quizIndex = 0;
+
+          let missedIds = [];
+          let retryMode = false;
+
+          function shuffleArray(arr) {
+            const copy = arr.slice();
+            for (let i = copy.length - 1; i > 0; i--) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [copy[i], copy[j]] = [copy[j], copy[i]];
+            }
+            return copy;
+          }
+
+          function initQuizDeck(fromMissed) {
+            let deckSource;
+            if (fromMissed && missedIds.length > 0) {
+              deckSource = flashcards.filter((c) => missedIds.includes(c.id));
+            } else {
+              let deck = getActiveDeck();
+              if (deck.length < 4) deck = flashcards.slice();
+              deckSource = deck;
+            }
+            quizDeck = shuffleArray(deckSource.map((c) => c.id));
+            quizIndex = 0;
+          }
+
+          function getCardById(id) {
+            return flashcards.find((c) => c.id === id);
+          }
+
+          function initQuizQuestion() {
+            if (quizDeck.length === 0) initQuizDeck(retryMode);
+
+            if (quizDeck.length === 0) {
+              quizQuestionEl.textContent = "No cards available for quiz.";
+              quizOptionsEl.innerHTML = "";
+              quizFeedbackEl.textContent = "";
+              return;
+            }
+
+            quizFeedbackEl.textContent = "";
+            quizFeedbackEl.className = "quiz-feedback";
+            quizAnswered = false;
+
+            if (quizIndex >= quizDeck.length) initQuizDeck(retryMode);
+
+            const cardId = quizDeck[quizIndex];
+            const card = getCardById(cardId);
+            currentQuizAnswer = card.term;
+
+            quizQuestionEl.textContent = card.definition;
+            quizRoundLabel.textContent = retryMode ? "Retry round – missed questions" : "Main round";
+
+            let pool = flashcards.filter((c) => c.id !== cardId);
+            pool = shuffleArray(pool);
+            const distractors = pool.slice(0, 3).map((c) => c.term);
+            const choices = shuffleArray([currentQuizAnswer, ...distractors]);
+
+            quizOptionsEl.innerHTML = "";
+            choices.forEach((choice) => {
+              const btn = document.createElement("button");
+              btn.className = "quiz-option";
+              btn.textContent = choice;
+              btn.addEventListener("click", () => handleQuizAnswer(btn, choice));
+              quizOptionsEl.appendChild(btn);
+            });
+
+            updateQuizStats();
+          }
+
+          function handleQuizAnswer(button, choice) {
+            if (quizAnswered) return;
+            quizAnswered = true;
+            quizTotal++;
+
+            const optionButtons = quizOptionsEl.querySelectorAll("button");
+            optionButtons.forEach((btn) => {
+              btn.disabled = true;
+              if (btn.textContent === currentQuizAnswer) btn.classList.add("correct");
+            });
+
+            const currentId = quizDeck[quizIndex];
+            if (choice === currentQuizAnswer) {
+              quizCorrect++;
+              quizFeedbackEl.textContent = "Correct! ✅";
+              quizFeedbackEl.classList.add("correct");
+              if (retryMode) missedIds = missedIds.filter((id) => id !== currentId);
+            } else {
+              quizFeedbackEl.textContent = "Not quite. Correct answer: " + currentQuizAnswer;
+              quizFeedbackEl.classList.add("incorrect");
+              button.classList.add("incorrect");
+              if (!missedIds.includes(currentId)) missedIds.push(currentId);
+            }
+
+            quizIndex++;
+            updateQuizStats();
+          }
+
+          function updateQuizStats() {
+            const pct = quizTotal === 0 ? 0 : Math.round((quizCorrect / quizTotal) * 100);
+            const missedCount = missedIds.length;
+            quizStatsEl.textContent =
+              "Score: " + quizCorrect + "/" + quizTotal + " (" + pct + "%) • Missed: " + missedCount;
+          }
+
+          quizNextBtn.addEventListener("click", initQuizQuestion);
+
+          quizResetBtn.addEventListener("click", () => {
+            quizCorrect = 0;
+            quizTotal = 0;
+            missedIds = [];
+            retryMode = false;
+            initQuizDeck(false);
+            updateQuizStats();
+            initQuizQuestion();
+          });
+
+          quizRetryBtn.addEventListener("click", () => {
+            if (missedIds.length === 0) {
+              quizFeedbackEl.textContent = "No missed questions yet — keep going!";
+              quizFeedbackEl.className = "quiz-feedback";
+              return;
+            }
+            quizCorrect = 0;
+            quizTotal = 0;
+            retryMode = true;
+            initQuizDeck(true);
+            updateQuizStats();
+            initQuizQuestion();
+          });
+
+          // ==========================
+          //  INITIALIZE
+          // ==========================
+          updateActiveDeck();
+          renderCard();
+          buildMatchingRound();
+          initQuizDeck(false);
+          initQuizQuestion();
         })();
       });
     </script>
