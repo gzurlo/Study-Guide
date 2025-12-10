@@ -114,17 +114,90 @@
       .matching-select.incorrect { border-color: #ef4444; box-shadow: 0 0 0 1px #ef4444; }
 
       /* Quiz */
-      .quiz-question-label {
-        text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.7rem; color: #f97316; margin-bottom: 6px;
+      .quiz-settings {
+        background: #0b1120; border-radius: 12px; padding: 12px 16px; margin-bottom: 12px;
+        border: 1px solid #1f2937;
       }
-      .quiz-question-text { font-size: 1rem; line-height: 1.4; margin-bottom: 14px; }
-      .quiz-options { display: flex; flex-direction: column; gap: 8px; }
-      .quiz-option { text-align: left; width: 100%; }
+      .settings-row {
+        display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 8px;
+      }
+      .settings-row:last-child { margin-bottom: 0; }
+      .setting-label {
+        font-size: 0.85rem; color: #e5e7eb; display: flex; align-items: center; gap: 6px;
+      }
+      .setting-label input[type="checkbox"] {
+        width: 16px; height: 16px; cursor: pointer;
+      }
+      .setting-label select {
+        margin-left: 6px; padding: 4px 8px; border-radius: 6px; border: 1px solid #374151;
+        background: #020617; color: #e5e7eb; font-size: 0.85rem;
+      }
+
+      .quiz-header {
+        display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+      }
+      .quiz-question-label {
+        text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.7rem; color: #f97316;
+      }
+      .quiz-timer {
+        font-size: 1.1rem; font-weight: bold; padding: 4px 12px; border-radius: 999px;
+        background: #0b1120; border: 1px solid #374151;
+      }
+      .quiz-timer.warning { color: #f97316; border-color: #f97316; }
+      .quiz-timer.danger { color: #ef4444; border-color: #ef4444; animation: pulse 0.5s infinite; }
+      @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+      .quiz-progress-bar {
+        width: 100%; height: 4px; background: #1f2937; border-radius: 2px; margin-bottom: 12px;
+        overflow: hidden;
+      }
+      .quiz-progress-fill {
+        height: 100%; background: linear-gradient(90deg, #4f46e5, #6366f1); width: 0%;
+        transition: width 0.3s ease;
+      }
+
+      .quiz-question-text { font-size: 1.05rem; line-height: 1.5; margin-bottom: 16px; font-weight: 500; }
+      .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+      .quiz-option {
+        text-align: left; width: 100%; padding: 12px 16px; font-size: 0.95rem;
+        transition: all 0.2s ease;
+      }
+      .quiz-option:hover:not(:disabled) { background: #1f2937; transform: translateX(4px); }
       .quiz-option.correct { background: #14532d; border-color: #22c55e; }
       .quiz-option.incorrect { background: #7f1d1d; border-color: #ef4444; }
-      .quiz-feedback { margin-top: 10px; font-size: 0.9rem; }
+      .quiz-option:disabled { cursor: not-allowed; }
+
+      .quiz-feedback { margin-top: 12px; font-size: 0.95rem; font-weight: 500; }
       .quiz-feedback.correct { color: #4ade80; }
       .quiz-feedback.incorrect { color: #fca5a5; }
+
+      .quiz-explanation {
+        margin-top: 10px; padding: 12px; background: #0b1120; border-radius: 8px;
+        border-left: 3px solid #6366f1; font-size: 0.9rem; line-height: 1.5;
+        color: #d1d5db; display: none;
+      }
+      .quiz-explanation.show { display: block; }
+
+      .quiz-summary {
+        margin-top: 12px; padding: 16px; background: #0b1120; border-radius: 12px;
+        border: 1px solid #1f2937; display: none;
+      }
+      .quiz-summary.show { display: block; }
+      .quiz-summary h3 {
+        margin: 0 0 12px 0; color: #f97316; font-size: 1.1rem;
+      }
+      .quiz-summary-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px;
+      }
+      .quiz-summary-stat {
+        text-align: center; padding: 12px; background: #020617; border-radius: 8px;
+      }
+      .quiz-summary-stat-value {
+        font-size: 1.8rem; font-weight: bold; color: #6366f1;
+      }
+      .quiz-summary-stat-label {
+        font-size: 0.8rem; color: #9ca3af; margin-top: 4px;
+      }
 
       @media (max-width: 600px) {
         body { padding: 16px; }
@@ -152,8 +225,16 @@
       <!-- FILTERS -->
       <div class="filter-row">
         <button class="filter-button filter-active" data-filter="all">All cards</button>
-        <button class="filter-button" data-filter="unknown">Only “Not yet”</button>
-        <button class="filter-button" data-filter="known">Only “Got it”</button>
+        <button class="filter-button" data-filter="unknown">Only "Not yet"</button>
+        <button class="filter-button" data-filter="known">Only "Got it"</button>
+      </div>
+
+      <!-- DIFFICULTY FILTERS -->
+      <div class="filter-row">
+        <button class="filter-button filter-active" data-difficulty="all">All difficulty</button>
+        <button class="filter-button" data-difficulty="easy">Easy</button>
+        <button class="filter-button" data-difficulty="medium">Medium</button>
+        <button class="filter-button" data-difficulty="hard">Hard</button>
       </div>
       <div class="filter-note">Filters apply to <strong>all modes</strong>. Progress is saved automatically on this device.</div>
 
@@ -198,19 +279,64 @@
       <div id="mode-quiz" class="mode hidden">
         <p class="subtitle">Multiple-choice: pick the correct <strong>term</strong> for each definition.</p>
 
+        <!-- Quiz Settings -->
+        <div class="quiz-settings">
+          <div class="settings-row">
+            <label class="setting-label">
+              <input type="checkbox" id="quiz-app-only" />
+              Application questions only (harder)
+            </label>
+            <label class="setting-label">
+              <input type="checkbox" id="quiz-timer" />
+              Timed mode (30s per question)
+            </label>
+          </div>
+          <div class="settings-row">
+            <label class="setting-label">
+              Difficulty:
+              <select id="quiz-difficulty-select">
+                <option value="all">All difficulties</option>
+                <option value="easy">Easy only</option>
+                <option value="medium">Medium only</option>
+                <option value="hard">Hard only</option>
+                <option value="progressive">Progressive (easy→hard)</option>
+              </select>
+            </label>
+            <label class="setting-label">
+              Question count:
+              <select id="quiz-question-count">
+                <option value="10">10 questions</option>
+                <option value="20">20 questions</option>
+                <option value="30">30 questions</option>
+                <option value="50">50 questions</option>
+                <option value="all">All questions</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
         <div class="quiz-card">
-          <div class="quiz-question-label" id="quiz-round-label">Question</div>
+          <div class="quiz-header">
+            <div class="quiz-question-label" id="quiz-round-label">Question</div>
+            <div class="quiz-timer" id="quiz-timer-display"></div>
+          </div>
+          <div class="quiz-progress-bar">
+            <div class="quiz-progress-fill" id="quiz-progress-fill"></div>
+          </div>
           <div class="quiz-question-text" id="quiz-question"></div>
           <div class="quiz-options" id="quiz-options"></div>
           <div class="quiz-feedback" id="quiz-feedback"></div>
+          <div class="quiz-explanation" id="quiz-explanation"></div>
         </div>
 
         <div class="controls">
           <button id="quiz-next" class="primary">Next question</button>
           <button id="quiz-retry" class="subtle">Retry missed questions</button>
           <button id="quiz-reset" class="subtle">Reset quiz stats</button>
+          <button id="quiz-new-session" class="subtle">New quiz session</button>
         </div>
         <div class="stats" id="quiz-stats"></div>
+        <div class="quiz-summary" id="quiz-summary"></div>
       </div>
 
       <p class="tagline">
@@ -312,6 +438,55 @@
           ];
 
           // ==========================
+          //  APPLICATION QUESTIONS (Thinking-based)
+          // ==========================
+          const applicationQuestions = [
+            // PHYSICS - Newton's Laws
+            { id: "app1", question: "A car crashes into a wall and stops. The wall exerts 50,000 N of force on the car. According to Newton's Third Law, how much force does the car exert on the wall?", correctAnswer: "50,000 N in the opposite direction", distractors: ["25,000 N", "100,000 N", "0 N because the car stopped"], difficulty: "medium", topic: "Physics" },
+            { id: "app2", question: "Two identical cars traveling at the same speed collide head-on. Car A has twice the mass of Car B. Which car experiences more force during the collision?", correctAnswer: "Both experience equal force (Newton's 3rd Law)", distractors: ["Car A experiences more force", "Car B experiences more force", "Neither experiences force"], difficulty: "hard", topic: "Physics" },
+            { id: "app3", question: "If you double the distance you push a box with the same force, what happens to the work done?", correctAnswer: "Work doubles", distractors: ["Work stays the same", "Work is cut in half", "Work quadruples"], difficulty: "medium", topic: "Physics" },
+            { id: "app4", question: "A planet orbits twice as far from the Sun as Earth. According to the inverse square law, how does the gravitational force compare to Earth's?", correctAnswer: "1/4 as strong", distractors: ["1/2 as strong", "Twice as strong", "1/8 as strong"], difficulty: "hard", topic: "Physics" },
+            { id: "app5", question: "Why does a heavy truck take longer to stop than a car traveling at the same speed?", correctAnswer: "Greater momentum requires more impulse (force × time) to stop", distractors: ["The truck has more friction", "The truck has less kinetic energy", "The truck experiences less force from brakes"], difficulty: "hard", topic: "Physics" },
+
+            // EARTH SCIENCE - Oceans & Atmosphere
+            { id: "app6", question: "Why are ocean tides higher during a new moon or full moon?", correctAnswer: "Sun and Moon align, combining their gravitational pull", distractors: ["Moon is closer to Earth", "Ocean water is warmer", "Earth's rotation speeds up"], difficulty: "medium", topic: "Earth Science" },
+            { id: "app7", question: "Most meteors burn up in which atmospheric layer and why?", correctAnswer: "Mesosphere - because air friction creates intense heat", distractors: ["Thermosphere - highest temperature", "Stratosphere - ozone layer", "Troposphere - densest air"], difficulty: "hard", topic: "Earth Science" },
+            { id: "app8", question: "Why is it warmer in summer than winter (for locations not at the equator)?", correctAnswer: "Earth's tilt causes more direct sunlight and longer days", distractors: ["Earth is closer to the Sun", "The atmosphere is thinner", "More greenhouse gases in summer"], difficulty: "medium", topic: "Earth Science" },
+            { id: "app9", question: "A city on the coast has milder temperatures year-round compared to an inland city at the same latitude. Why?", correctAnswer: "Ocean water has high heat capacity, moderating temperatures", distractors: ["Coastal cities have more clouds", "Ocean salinity affects air temperature", "Sea level is lower than inland"], difficulty: "hard", topic: "Earth Science" },
+            { id: "app10", question: "What would happen to Earth's climate if greenhouse gas concentrations suddenly doubled?", correctAnswer: "More terrestrial radiation trapped, global temperatures rise", distractors: ["Solar radiation would decrease", "More solar radiation would reach Earth", "Seasons would reverse"], difficulty: "hard", topic: "Earth Science" },
+
+            // EARTH SCIENCE - Weather & Climate
+            { id: "app11", question: "Why do hurricanes lose strength when they move over land?", correctAnswer: "Cut off from warm ocean water (energy source)", distractors: ["Land friction slows rotation", "Temperature drops too quickly", "Mountains block the storm"], difficulty: "medium", topic: "Earth Science" },
+            { id: "app12", question: "Air rises over a mountain, cools, and forms clouds on the windward side. What happens on the leeward (downwind) side?", correctAnswer: "Air descends, warms, becomes dry (rain shadow)", distractors: ["More clouds form", "Temperature stays the same", "Air becomes more humid"], difficulty: "hard", topic: "Earth Science" },
+            { id: "app13", question: "The dew point is 15°C and the air temperature is 25°C. Will condensation occur?", correctAnswer: "No - air must cool to dew point first", distractors: ["Yes - condensation always occurs", "Only if humidity increases", "Only at night"], difficulty: "medium", topic: "Earth Science" },
+            { id: "app14", question: "Why do tornadoes most commonly form in 'Tornado Alley' (central United States)?", correctAnswer: "Cold dry air from Canada meets warm moist air from Gulf, creating wind shear", distractors: ["Mountains create wind tunnels", "Flat land has no obstacles", "Magnetic fields are stronger"], difficulty: "hard", topic: "Earth Science" },
+
+            // ASTRONOMY - Solar System
+            { id: "app15", question: "Why do inner planets orbit the Sun faster than outer planets?", correctAnswer: "Closer distance = stronger gravity = higher orbital speed (Kepler's laws)", distractors: ["Inner planets are smaller", "Inner planets are rockier", "Outer planets have more moons"], difficulty: "hard", topic: "Astronomy" },
+            { id: "app16", question: "A comet's tail always points away from the Sun, even when moving away from the Sun. Why?", correctAnswer: "Solar wind and radiation pressure push material away", distractors: ["Comet's motion creates the tail direction", "Gravity pulls the tail", "Magnetic fields orient the tail"], difficulty: "hard", topic: "Astronomy" },
+            { id: "app17", question: "Why is Pluto no longer classified as a planet?", correctAnswer: "Has not cleared its orbital path of other objects", distractors: ["Too small", "Orbit is too elliptical", "Too far from the Sun"], difficulty: "medium", topic: "Astronomy" },
+            { id: "app18", question: "What's the main reason we see different phases of the Moon?", correctAnswer: "Changing angle between Sun, Moon, and Earth as Moon orbits", distractors: ["Earth's shadow on the Moon", "Moon's rotation", "Distance from Earth changes"], difficulty: "medium", topic: "Astronomy" },
+
+            // ASTRONOMY - Stars & Galaxies
+            { id: "app19", question: "Star A and Star B have the same temperature, but Star A appears brighter. What can you conclude?", correctAnswer: "Star A is either closer or has greater luminosity", distractors: ["Star A is hotter", "Star A is older", "Star A has more planets"], difficulty: "hard", topic: "Astronomy" },
+            { id: "app20", question: "A blue star and a red star have the same luminosity. According to the H-R diagram, which is larger?", correctAnswer: "Red star - must be larger to output same energy at lower temperature", distractors: ["Blue star", "Same size", "Cannot determine from this information"], difficulty: "hard", topic: "Astronomy" },
+            { id: "app21", question: "Why don't we see the same constellations year-round?", correctAnswer: "Earth's revolution around Sun changes our nighttime view of space", distractors: ["Stars move in the galaxy", "Earth's rotation changes", "Atmospheric conditions vary"], difficulty: "medium", topic: "Astronomy" },
+            { id: "app22", question: "What determines whether a star becomes a white dwarf or a black hole after death?", correctAnswer: "Initial mass - low/medium mass → white dwarf; high mass → black hole", distractors: ["Temperature during life", "Distance from galactic center", "Chemical composition"], difficulty: "hard", topic: "Astronomy" },
+            { id: "app23", question: "Why do spiral galaxies have more new star formation than elliptical galaxies?", correctAnswer: "Spiral galaxies have more gas and dust for star formation", distractors: ["Spiral galaxies are younger", "Elliptical galaxies rotate faster", "Gravity is stronger in spiral galaxies"], difficulty: "hard", topic: "Astronomy" },
+
+            // ASTRONOMY - Expansion & Big Bang
+            { id: "app24", question: "Galaxy A is 2 times farther from us than Galaxy B. According to Hubble's Law, how do their recession speeds compare?", correctAnswer: "Galaxy A recedes 2 times faster", distractors: ["Galaxy A recedes 4 times faster", "Same recession speed", "Galaxy A recedes half as fast"], difficulty: "hard", topic: "Astronomy" },
+            { id: "app25", question: "An astronomer observes a galaxy with strong redshift. What does this tell us?", correctAnswer: "The galaxy is moving away from us rapidly", distractors: ["The galaxy is very hot", "The galaxy is moving toward us", "The galaxy is very old"], difficulty: "medium", topic: "Astronomy" },
+            { id: "app26", question: "Why is the cosmic microwave background important evidence for the Big Bang?", correctAnswer: "It's leftover radiation from when the universe was hot and dense", distractors: ["It shows the universe is still expanding", "It proves dark matter exists", "It measures the age of stars"], difficulty: "hard", topic: "Astronomy" },
+            { id: "app27", question: "If the Big Bang theory is correct, why is hydrogen the most abundant element in the universe?", correctAnswer: "Hydrogen formed first in Big Bang nucleosynthesis as the simplest element", distractors: ["Hydrogen is produced by all stars", "Hydrogen lasts longer than other elements", "Hydrogen is created by black holes"], difficulty: "hard", topic: "Astronomy" },
+
+            // MIXED CONCEPTS
+            { id: "app28", question: "During a solar eclipse, what type of eclipse does the Moon experience from its perspective?", correctAnswer: "Lunar eclipse (Earth blocks sunlight from Moon's view)", distractors: ["Solar eclipse", "No eclipse occurs", "Partial eclipse only"], difficulty: "hard", topic: "Astronomy" },
+            { id: "app29", question: "Why can we detect black holes if light cannot escape them?", correctAnswer: "We observe their effects: X-rays from accretion disks, stellar orbits, gravitational waves", distractors: ["They emit radio waves", "They reflect nearby starlight", "They glow from heat"], difficulty: "hard", topic: "Astronomy" },
+            { id: "app30", question: "If convection stopped in Earth's atmosphere, what would happen to weather patterns?", correctAnswer: "Weather would cease - no vertical air movement, no clouds, no storms", distractors: ["Weather would become more severe", "Only ocean weather would change", "Seasons would disappear"], difficulty: "hard", topic: "Earth Science" }
+          ];
+
+          // ==========================
           //  LOCAL STORAGE PROGRESS
           // ==========================
           const STORAGE_KEY = "studyBuddyMajorConceptsProgress_v1";
@@ -351,8 +526,9 @@
           //  FILTERING
           // ==========================
           let currentFilter = "all";
+          let currentDifficulty = "all";
 
-          const filterButtons = document.querySelectorAll(".filter-button");
+          const filterButtons = document.querySelectorAll(".filter-button[data-filter]");
           filterButtons.forEach((btn) => {
             btn.addEventListener("click", () => {
               currentFilter = btn.dataset.filter;
@@ -366,11 +542,34 @@
             });
           });
 
+          const difficultyButtons = document.querySelectorAll(".filter-button[data-difficulty]");
+          difficultyButtons.forEach((btn) => {
+            btn.addEventListener("click", () => {
+              currentDifficulty = btn.dataset.difficulty;
+              difficultyButtons.forEach((b) =>
+                b.classList.toggle("filter-active", b === btn)
+              );
+              updateActiveDeck();
+              initQuizDeck(false);
+              buildMatchingRound();
+              renderCard();
+            });
+          });
+
           function getActiveDeck() {
-            if (currentFilter === "all") return flashcards.slice();
-            return flashcards.filter(
-              (card) => getCardStatus(card.id) === currentFilter
-            );
+            let deck = flashcards.slice();
+
+            // Apply status filter
+            if (currentFilter !== "all") {
+              deck = deck.filter((card) => getCardStatus(card.id) === currentFilter);
+            }
+
+            // Apply difficulty filter
+            if (currentDifficulty !== "all") {
+              deck = deck.filter((card) => card.difficulty === currentDifficulty);
+            }
+
+            return deck;
           }
 
           let activeDeck = getActiveDeck();
@@ -663,6 +862,17 @@
           const quizResetBtn = document.getElementById("quiz-reset");
           const quizRetryBtn = document.getElementById("quiz-retry");
           const quizRoundLabel = document.getElementById("quiz-round-label");
+          const quizNewSessionBtn = document.getElementById("quiz-new-session");
+          const quizTimerDisplay = document.getElementById("quiz-timer-display");
+          const quizProgressFill = document.getElementById("quiz-progress-fill");
+          const quizExplanation = document.getElementById("quiz-explanation");
+          const quizSummary = document.getElementById("quiz-summary");
+
+          // Quiz settings controls
+          const quizAppOnlyCheckbox = document.getElementById("quiz-app-only");
+          const quizTimerCheckbox = document.getElementById("quiz-timer");
+          const quizDifficultySelect = document.getElementById("quiz-difficulty-select");
+          const quizQuestionCountSelect = document.getElementById("quiz-question-count");
 
           let quizCorrect = 0;
           let quizTotal = 0;
@@ -674,6 +884,28 @@
 
           let missedIds = [];
           let retryMode = false;
+          let useApplicationQuestions = false; // Mix in harder questions
+
+          // Enhanced quiz settings
+          let quizSettings = {
+            applicationOnly: false,
+            timerEnabled: false,
+            difficulty: 'all',
+            questionCount: 20,
+            timerSeconds: 30
+          };
+          let quizTimer = null;
+          let timeRemaining = 30;
+          let quizSessionStats = {
+            totalQuestions: 0,
+            correctAnswers: 0,
+            incorrectAnswers: 0,
+            averageTime: 0,
+            streak: 0,
+            bestStreak: 0,
+            questionTimes: []
+          };
+          let questionStartTime = 0;
 
           function shuffleArray(arr) {
             const copy = arr.slice();
@@ -690,11 +922,33 @@
               deckSource = flashcards.filter((c) => missedIds.includes(c.id));
             } else {
               let deck = getActiveDeck();
+
+              // Apply quiz difficulty filter (separate from global difficulty)
+              if (quizSettings.difficulty !== 'all' && quizSettings.difficulty !== 'progressive') {
+                deck = deck.filter(c => c.difficulty === quizSettings.difficulty);
+              }
+
               if (deck.length < 4) deck = flashcards.slice();
-              deckSource = deck;
+
+              // Apply question count limit
+              const maxQuestions = quizSettings.questionCount === 'all'
+                ? deck.length
+                : parseInt(quizSettings.questionCount);
+
+              deckSource = deck.slice(0, maxQuestions);
             }
-            quizDeck = shuffleArray(deckSource.map((c) => c.id));
+
+            // Progressive difficulty: sort by difficulty
+            if (quizSettings.difficulty === 'progressive') {
+              const diffOrder = { easy: 1, medium: 2, hard: 3 };
+              deckSource.sort((a, b) => diffOrder[a.difficulty] - diffOrder[b.difficulty]);
+              quizDeck = deckSource.map((c) => c.id);
+            } else {
+              quizDeck = shuffleArray(deckSource.map((c) => c.id));
+            }
+
             quizIndex = 0;
+            updateProgressBar();
           }
 
           function getCardById(id) {
@@ -708,43 +962,106 @@
               quizQuestionEl.textContent = "No cards available for quiz.";
               quizOptionsEl.innerHTML = "";
               quizFeedbackEl.textContent = "";
+              quizExplanation.classList.remove("show");
+              return;
+            }
+
+            // Check if quiz session is complete
+            if (quizIndex >= quizDeck.length && !retryMode) {
+              showQuizSummary();
               return;
             }
 
             quizFeedbackEl.textContent = "";
             quizFeedbackEl.className = "quiz-feedback";
+            quizExplanation.classList.remove("show");
             quizAnswered = false;
+            questionStartTime = Date.now();
 
             if (quizIndex >= quizDeck.length) initQuizDeck(retryMode);
 
-            const cardId = quizDeck[quizIndex];
-            const card = getCardById(cardId);
-            currentQuizAnswer = card.term;
+            // Determine if we should use application question
+            const useAppQuestion = quizSettings.applicationOnly ||
+                                  (Math.random() < 0.4 && applicationQuestions.length > 0 && !quizSettings.applicationOnly);
 
-            quizQuestionEl.textContent = card.definition;
-            quizRoundLabel.textContent = retryMode ? "Retry round – missed questions" : "Main round";
+            if (useAppQuestion && (quizSettings.applicationOnly || applicationQuestions.length > 0)) {
+              // Application question
+              let appQ;
+              if (quizSettings.difficulty !== 'all' && quizSettings.difficulty !== 'progressive') {
+                const filteredAppQ = applicationQuestions.filter(q => q.difficulty === quizSettings.difficulty);
+                appQ = filteredAppQ.length > 0
+                  ? filteredAppQ[Math.floor(Math.random() * filteredAppQ.length)]
+                  : applicationQuestions[Math.floor(Math.random() * applicationQuestions.length)];
+              } else {
+                appQ = applicationQuestions[Math.floor(Math.random() * applicationQuestions.length)];
+              }
 
-            let pool = flashcards.filter((c) => c.id !== cardId);
-            pool = shuffleArray(pool);
-            const distractors = pool.slice(0, 3).map((c) => c.term);
-            const choices = shuffleArray([currentQuizAnswer, ...distractors]);
+              currentQuizAnswer = appQ.correctAnswer;
 
-            quizOptionsEl.innerHTML = "";
-            choices.forEach((choice) => {
-              const btn = document.createElement("button");
-              btn.className = "quiz-option";
-              btn.textContent = choice;
-              btn.addEventListener("click", () => handleQuizAnswer(btn, choice));
-              quizOptionsEl.appendChild(btn);
-            });
+              quizQuestionEl.innerHTML = "<strong>🧠 APPLICATION:</strong> " + appQ.question;
+              quizRoundLabel.textContent = retryMode ? "Retry – missed questions" : "Question " + (quizIndex + 1) + " of " + quizDeck.length;
+
+              const choices = shuffleArray([appQ.correctAnswer, ...appQ.distractors]);
+
+              quizOptionsEl.innerHTML = "";
+              choices.forEach((choice) => {
+                const btn = document.createElement("button");
+                btn.className = "quiz-option";
+                btn.textContent = choice;
+                btn.addEventListener("click", () => handleQuizAnswer(btn, choice, true, appQ));
+                quizOptionsEl.appendChild(btn);
+              });
+            } else {
+              // Regular flashcard question
+              const cardId = quizDeck[quizIndex];
+              const card = getCardById(cardId);
+              currentQuizAnswer = card.term;
+
+              quizQuestionEl.textContent = card.definition;
+              quizRoundLabel.textContent = retryMode
+                ? "Retry – missed questions"
+                : "Question " + (quizIndex + 1) + " of " + quizDeck.length;
+
+              let pool = flashcards.filter((c) => c.id !== cardId);
+              pool = shuffleArray(pool);
+              const distractors = pool.slice(0, 3).map((c) => c.term);
+              const choices = shuffleArray([currentQuizAnswer, ...distractors]);
+
+              quizOptionsEl.innerHTML = "";
+              choices.forEach((choice) => {
+                const btn = document.createElement("button");
+                btn.className = "quiz-option";
+                btn.textContent = choice;
+                btn.addEventListener("click", () => handleQuizAnswer(btn, choice, false, card));
+                quizOptionsEl.appendChild(btn);
+              });
+            }
 
             updateQuizStats();
+            updateProgressBar();
+
+            // Start timer if enabled
+            if (quizSettings.timerEnabled) {
+              startQuizTimer();
+            } else {
+              quizTimerDisplay.textContent = "";
+            }
           }
 
-          function handleQuizAnswer(button, choice) {
+          function handleQuizAnswer(button, choice, isAppQuestion, questionData) {
             if (quizAnswered) return;
             quizAnswered = true;
             quizTotal++;
+
+            // Stop timer
+            if (quizTimer) {
+              clearInterval(quizTimer);
+              quizTimer = null;
+            }
+
+            // Calculate time taken
+            const timeTaken = (Date.now() - questionStartTime) / 1000;
+            quizSessionStats.questionTimes.push(timeTaken);
 
             const optionButtons = quizOptionsEl.querySelectorAll("button");
             optionButtons.forEach((btn) => {
@@ -752,28 +1069,169 @@
               if (btn.textContent === currentQuizAnswer) btn.classList.add("correct");
             });
 
-            const currentId = quizDeck[quizIndex];
-            if (choice === currentQuizAnswer) {
+            const isCorrect = choice === currentQuizAnswer;
+
+            if (isCorrect) {
               quizCorrect++;
-              quizFeedbackEl.textContent = "Correct! ✅";
+              quizSessionStats.correctAnswers++;
+              quizSessionStats.streak++;
+              if (quizSessionStats.streak > quizSessionStats.bestStreak) {
+                quizSessionStats.bestStreak = quizSessionStats.streak;
+              }
+
+              quizFeedbackEl.textContent = isAppQuestion
+                ? "🎯 Excellent reasoning! ✅"
+                : "✅ Correct! (" + timeTaken.toFixed(1) + "s)";
               quizFeedbackEl.classList.add("correct");
-              if (retryMode) missedIds = missedIds.filter((id) => id !== currentId);
+
+              if (!isAppQuestion && retryMode) {
+                const currentId = quizDeck[quizIndex];
+                missedIds = missedIds.filter((id) => id !== currentId);
+              }
             } else {
-              quizFeedbackEl.textContent = "Not quite. Correct answer: " + currentQuizAnswer;
+              quizSessionStats.incorrectAnswers++;
+              quizSessionStats.streak = 0;
+
+              quizFeedbackEl.textContent = "❌ Not quite. Correct answer: " + currentQuizAnswer;
               quizFeedbackEl.classList.add("incorrect");
               button.classList.add("incorrect");
-              if (!missedIds.includes(currentId)) missedIds.push(currentId);
+
+              if (!isAppQuestion) {
+                const currentId = quizDeck[quizIndex];
+                if (!missedIds.includes(currentId)) missedIds.push(currentId);
+              }
+
+              // Show explanation for incorrect answers
+              showExplanation(questionData, isAppQuestion);
             }
 
-            quizIndex++;
+            quizSessionStats.totalQuestions++;
+            if (!isAppQuestion) quizIndex++;
             updateQuizStats();
+            updateProgressBar();
+          }
+
+          function showExplanation(questionData, isAppQuestion) {
+            if (!questionData) return;
+
+            let explanationText = "";
+
+            if (isAppQuestion) {
+              // For application questions, provide context
+              explanationText = "💡 This question tests your understanding of " + questionData.topic + ". ";
+              explanationText += "The correct answer requires applying concepts, not just memorization.";
+            } else {
+              // For regular flashcards, show the full definition
+              explanationText = "📖 Definition: " + questionData.definition;
+            }
+
+            quizExplanation.textContent = explanationText;
+            quizExplanation.classList.add("show");
           }
 
           function updateQuizStats() {
             const pct = quizTotal === 0 ? 0 : Math.round((quizCorrect / quizTotal) * 100);
             const missedCount = missedIds.length;
-            quizStatsEl.textContent =
-              "Score: " + quizCorrect + "/" + quizTotal + " (" + pct + "%) • Missed: " + missedCount;
+            const streak = quizSessionStats.streak;
+            const avgTime = quizSessionStats.questionTimes.length > 0
+              ? (quizSessionStats.questionTimes.reduce((a, b) => a + b, 0) / quizSessionStats.questionTimes.length).toFixed(1)
+              : 0;
+
+            quizStatsEl.innerHTML =
+              "<span>Score: " + quizCorrect + "/" + quizTotal + " (" + pct + "%)</span>" +
+              "<span>Streak: " + streak + " 🔥</span>" +
+              "<span>Best: " + quizSessionStats.bestStreak + "</span>" +
+              "<span>Avg time: " + avgTime + "s</span>" +
+              "<span>Missed: " + missedCount + "</span>";
+          }
+
+          function updateProgressBar() {
+            if (quizDeck.length === 0) return;
+            const progress = (quizIndex / quizDeck.length) * 100;
+            quizProgressFill.style.width = progress + "%";
+          }
+
+          function startQuizTimer() {
+            if (quizTimer) clearInterval(quizTimer);
+
+            timeRemaining = quizSettings.timerSeconds;
+            updateTimerDisplay();
+
+            quizTimer = setInterval(() => {
+              timeRemaining--;
+              updateTimerDisplay();
+
+              if (timeRemaining <= 0) {
+                clearInterval(quizTimer);
+                quizTimer = null;
+                // Auto-submit as incorrect
+                if (!quizAnswered) {
+                  const optionButtons = quizOptionsEl.querySelectorAll("button");
+                  if (optionButtons.length > 0) {
+                    handleQuizAnswer(optionButtons[0], "", false, null);
+                    quizFeedbackEl.textContent = "⏱️ Time's up!";
+                  }
+                }
+              }
+            }, 1000);
+          }
+
+          function updateTimerDisplay() {
+            quizTimerDisplay.textContent = "⏱️ " + timeRemaining + "s";
+            quizTimerDisplay.classList.remove("warning", "danger");
+
+            if (timeRemaining <= 5) {
+              quizTimerDisplay.classList.add("danger");
+            } else if (timeRemaining <= 10) {
+              quizTimerDisplay.classList.add("warning");
+            }
+          }
+
+          function showQuizSummary() {
+            const totalTime = quizSessionStats.questionTimes.reduce((a, b) => a + b, 0);
+            const avgTime = (totalTime / quizSessionStats.questionTimes.length).toFixed(1);
+            const pct = Math.round((quizSessionStats.correctAnswers / quizSessionStats.totalQuestions) * 100);
+
+            let grade = "";
+            if (pct >= 90) grade = "🏆 Outstanding!";
+            else if (pct >= 80) grade = "🌟 Excellent!";
+            else if (pct >= 70) grade = "👍 Good job!";
+            else if (pct >= 60) grade = "📚 Keep studying!";
+            else grade = "💪 Review needed!";
+
+            quizSummary.innerHTML = `
+              <h3>📊 Quiz Session Complete! ${grade}</h3>
+              <div class="quiz-summary-grid">
+                <div class="quiz-summary-stat">
+                  <div class="quiz-summary-stat-value">${pct}%</div>
+                  <div class="quiz-summary-stat-label">Score</div>
+                </div>
+                <div class="quiz-summary-stat">
+                  <div class="quiz-summary-stat-value">${quizSessionStats.correctAnswers}</div>
+                  <div class="quiz-summary-stat-label">Correct</div>
+                </div>
+                <div class="quiz-summary-stat">
+                  <div class="quiz-summary-stat-value">${quizSessionStats.incorrectAnswers}</div>
+                  <div class="quiz-summary-stat-label">Incorrect</div>
+                </div>
+                <div class="quiz-summary-stat">
+                  <div class="quiz-summary-stat-value">${quizSessionStats.bestStreak}</div>
+                  <div class="quiz-summary-stat-label">Best Streak</div>
+                </div>
+                <div class="quiz-summary-stat">
+                  <div class="quiz-summary-stat-value">${avgTime}s</div>
+                  <div class="quiz-summary-stat-label">Avg Time</div>
+                </div>
+                <div class="quiz-summary-stat">
+                  <div class="quiz-summary-stat-value">${missedIds.length}</div>
+                  <div class="quiz-summary-stat-label">To Review</div>
+                </div>
+              </div>
+            `;
+            quizSummary.classList.add("show");
+
+            quizQuestionEl.textContent = "Session complete! Start a new quiz or retry missed questions.";
+            quizOptionsEl.innerHTML = "";
           }
 
           quizNextBtn.addEventListener("click", initQuizQuestion);
@@ -797,9 +1255,52 @@
             quizCorrect = 0;
             quizTotal = 0;
             retryMode = true;
+            quizSummary.classList.remove("show");
             initQuizDeck(true);
             updateQuizStats();
             initQuizQuestion();
+          });
+
+          quizNewSessionBtn.addEventListener("click", () => {
+            quizCorrect = 0;
+            quizTotal = 0;
+            missedIds = [];
+            retryMode = false;
+            quizSummary.classList.remove("show");
+            quizSessionStats = {
+              totalQuestions: 0,
+              correctAnswers: 0,
+              incorrectAnswers: 0,
+              averageTime: 0,
+              streak: 0,
+              bestStreak: 0,
+              questionTimes: []
+            };
+            initQuizDeck(false);
+            updateQuizStats();
+            initQuizQuestion();
+          });
+
+          // Quiz settings event listeners
+          quizAppOnlyCheckbox.addEventListener("change", (e) => {
+            quizSettings.applicationOnly = e.target.checked;
+          });
+
+          quizTimerCheckbox.addEventListener("change", (e) => {
+            quizSettings.timerEnabled = e.target.checked;
+            if (!e.target.checked && quizTimer) {
+              clearInterval(quizTimer);
+              quizTimer = null;
+              quizTimerDisplay.textContent = "";
+            }
+          });
+
+          quizDifficultySelect.addEventListener("change", (e) => {
+            quizSettings.difficulty = e.target.value;
+          });
+
+          quizQuestionCountSelect.addEventListener("change", (e) => {
+            quizSettings.questionCount = e.target.value;
           });
 
           // ==========================
