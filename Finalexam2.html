@@ -222,59 +222,59 @@
       document.addEventListener("DOMContentLoaded", () => {
         (function () {
           const flashcards = [
-            // PHYSICS: NEWTON'S LAWS
-            { id: 1, term: "Newton’s First Law (Inertia)", definition: "An object at rest stays at rest and an object in motion stays in motion unless acted on by a net external force." },
-            { id: 2, term: "Newton’s Second Law (Acceleration)", definition: "Net force causes acceleration: F = m·a. More force → more acceleration; more mass → less acceleration." },
-            { id: 3, term: "Newton’s Third Law (Action–Reaction)", definition: "For every action force, there is an equal and opposite reaction force." },
-            { id: 4, term: "Impulse", definition: "Impulse = Force × Time; changes momentum." },
-            { id: 5, term: "Momentum", definition: "Momentum = mass × velocity. Describes how hard an object is to stop." },
-            { id: 6, term: "Work", definition: "Work = Force × Distance. Work is done when a force causes displacement." },
-            { id: 7, term: "Power", definition: "Power = Work / Time. Power is the rate of doing work." },
-            { id: 8, term: "Kinetic Energy", definition: "Energy of motion, commonly KE = 1/2 m v²." },
-            { id: 9, term: "Potential Energy", definition: "Stored energy due to position or condition, such as gravitational potential energy." },
-            { id: 10, term: "Universal Law of Gravitation", definition: "All masses attract each other; force depends on masses and distance: F ∝ m1·m2 / r²." },
-            { id: 11, term: "Inverse Square Law", definition: "Gravitational force decreases with the square of the distance: doubling r makes force 1/4 as strong." },
-            
+            // PHYSICS: NEWTON'S LAWS (with different difficulty levels)
+            { id: 1, term: "Newton’s First Law (Inertia)", definition: "An object at rest stays at rest and an object in motion stays in motion unless acted on by a net external force.", difficulty: "easy" },
+            { id: 2, term: "Newton’s Second Law (Acceleration)", definition: "Net force causes acceleration: F = m·a. More force → more acceleration; more mass → less acceleration.", difficulty: "medium" },
+            { id: 3, term: "Newton’s Third Law (Action–Reaction)", definition: "For every action force, there is an equal and opposite reaction force.", difficulty: "easy" },
+            { id: 4, term: "Impulse", definition: "Impulse = Force × Time; changes momentum.", difficulty: "medium" },
+            { id: 5, term: "Momentum", definition: "Momentum = mass × velocity. Describes how hard an object is to stop.", difficulty: "easy" },
+            { id: 6, term: "Work", definition: "Work = Force × Distance. Work is done when a force causes displacement.", difficulty: "medium" },
+            { id: 7, term: "Power", definition: "Power = Work / Time. Power is the rate of doing work.", difficulty: "medium" },
+            { id: 8, term: "Kinetic Energy", definition: "Energy of motion, commonly KE = 1/2 m v².", difficulty: "medium" },
+            { id: 9, term: "Potential Energy", definition: "Stored energy due to position or condition, such as gravitational potential energy.", difficulty: "medium" },
+            { id: 10, term: "Universal Law of Gravitation", definition: "All masses attract each other; force depends on masses and distance: F ∝ m1·m2 / r².", difficulty: "hard" },
+            { id: 11, term: "Inverse Square Law", definition: "Gravitational force decreases with the square of the distance: doubling r makes force 1/4 as strong.", difficulty: "hard" },
+
             // EARTH SCIENCE: OCEANS
-            { id: 12, term: "Salinity", definition: "Amount of dissolved salts in seawater; affects density and circulation." },
-            { id: 13, term: "Ocean Tides", definition: "Daily sea-level changes mainly caused by the Moon’s gravity, with the Sun also contributing." },
+            { id: 12, term: "Salinity", definition: "Amount of dissolved salts in seawater; affects density and circulation.", difficulty: "easy" },
+            { id: 13, term: "Ocean Tides", definition: "Daily sea-level changes mainly caused by the Moon’s gravity, with the Sun also contributing.", difficulty: "easy" },
 
             // EARTH SCIENCE: ATMOSPHERE
-            { id: 14, term: "Layers of the Atmosphere", definition: "Troposphere, stratosphere, mesosphere, thermosphere, exosphere (ordered from ground up)." },
-            { id: 15, term: "Solar Radiation", definition: "Incoming energy from the Sun, shorter wavelength, heats Earth." },
-            { id: 16, term: "Terrestrial Radiation", definition: "Energy Earth re-emits back to space, longer wavelength (infrared)." },
-            { id: 17, term: "Seasons", definition: "Caused by Earth’s 23.5° axial tilt and revolution around the Sun, changing sunlight angle and day length." },
-            { id: 18, term: "Convection Cycle", definition: "Warm, less-dense air rises; cool, denser air sinks, creating circulation in atmosphere/oceans." },
+            { id: 14, term: "Layers of the Atmosphere", definition: "Troposphere, stratosphere, mesosphere, thermosphere, exosphere (ordered from ground up).", difficulty: "medium" },
+            { id: 15, term: "Solar Radiation", definition: "Incoming energy from the Sun, shorter wavelength, heats Earth.", difficulty: "medium" },
+            { id: 16, term: "Terrestrial Radiation", definition: "Energy Earth re-emits back to space, longer wavelength (infrared).", difficulty: "medium" },
+            { id: 17, term: "Seasons", definition: "Caused by Earth’s 23.5° axial tilt and revolution around the Sun, changing sunlight angle and day length.", difficulty: "easy" },
+            { id: 18, term: "Convection Cycle", definition: "Warm, less-dense air rises; cool, denser air sinks, creating circulation in atmosphere/oceans.", difficulty: "medium" },
 
             // EARTH SCIENCE: WEATHER & CLIMATE
-            { id: 19, term: "Weather", definition: "Day-to-day state of the atmosphere (temperature, precipitation, wind, etc.)." },
-            { id: 20, term: "Climate", definition: "Average weather conditions over 30+ years for a region." },
-            { id: 21, term: "Climate Change", definition: "Long-term shift in climate patterns; driven by natural and human causes, with modern influence from greenhouse gases." },
-            { id: 22, term: "Sea Level Rise", definition: "Increase in global sea level due to melting ice and thermal expansion of warming water." },
-            { id: 23, term: "Humidity", definition: "Amount of water vapor in the air." },
-            { id: 24, term: "Dew Point", definition: "Temperature at which air becomes saturated and condensation begins." },
+            { id: 19, term: "Weather", definition: "Day-to-day state of the atmosphere (temperature, precipitation, wind, etc.).", difficulty: "easy" },
+            { id: 20, term: "Climate", definition: "Average weather conditions over 30+ years for a region.", difficulty: "medium" },
+            { id: 21, term: "Climate Change", definition: "Long-term shift in climate patterns; driven by natural and human causes, with modern influence from greenhouse gases.", difficulty: "hard" },
+            { id: 22, term: "Sea Level Rise", definition: "Increase in global sea level due to melting ice and thermal expansion of warming water.", difficulty: "hard" },
+            { id: 23, term: "Humidity", definition: "Amount of water vapor in the air.", difficulty: "easy" },
+            { id: 24, term: "Dew Point", definition: "Temperature at which air becomes saturated and condensation begins.", difficulty: "medium" },
 
             // ASTRONOMY: SOLAR SYSTEM
-            { id: 25, term: "Nebular Theory", definition: "Solar system formed from a rotating cloud of gas/dust that collapsed, flattened, and formed the Sun and planets." },
-            { id: 26, term: "Inner Planets", definition: "Mercury, Venus, Earth, Mars: small, rocky, dense, closer to the Sun, shorter orbital periods." },
-            { id: 27, term: "Outer Planets", definition: "Jupiter, Saturn, Uranus, Neptune: large, gas/ice giants, less dense, farther from the Sun, longer orbital periods." },
-            { id: 28, term: "Comets", definition: "Icy bodies that orbit the Sun, developing tails when near the Sun." },
-            { id: 29, term: "Asteroids", definition: "Rocky/metallic objects orbiting the Sun, mostly in the asteroid belt." },
+            { id: 25, term: "Nebular Theory", definition: "Solar system formed from a rotating cloud of gas/dust that collapsed, flattened, and formed the Sun and planets.", difficulty: "easy" },
+            { id: 26, term: "Inner Planets", definition: "Mercury, Venus, Earth, Mars: small, rocky, dense, closer to the Sun, shorter orbital periods.", difficulty: "medium" },
+            { id: 27, term: "Outer Planets", definition: "Jupiter, Saturn, Uranus, Neptune: large, gas/ice giants, less dense, farther from the Sun, longer orbital periods.", difficulty: "medium" },
+            { id: 28, term: "Comets", definition: "Icy bodies that orbit the Sun, developing tails when near the Sun.", difficulty: "easy" },
+            { id: 29, term: "Asteroids", definition: "Rocky/metallic objects orbiting the Sun, mostly in the asteroid belt.", difficulty: "medium" },
             
             // ASTRONOMY: STARS & GALAXIES
-            { id: 30, term: "Star Life Cycle", definition: "Nebula → protostar → main sequence → (low mass: red giant → planetary nebula → white dwarf) OR (high mass: supergiant → supernova → neutron star/black hole)." },
-            { id: 31, term: "Supernova", definition: "Explosive death of a massive star creating heavy elements and a stellar remnant." },
-            { id: 32, term: "H–R Diagram", definition: "Plot of luminosity vs temperature; shows main sequence, giants/supergiants, and white dwarfs." },
-            { id: 33, term: "Black Hole", definition: "Collapsed core of a massive star; gravity so strong that light cannot escape." },
-            { id: 34, term: "Spiral Galaxy", definition: "Disk-shaped galaxies with spiral arms, star formation, and gas/dust (Milky Way type)." },
-            { id: 35, term: "Elliptical Galaxy", definition: "Round/oval galaxies with mostly old stars and little gas/dust." },
+            { id: 30, term: "Star Life Cycle", definition: "Nebula → protostar → main sequence → (low mass: red giant → planetary nebula → white dwarf) OR (high mass: supergiant → supernova → neutron star/black hole).", difficulty: "hard" },
+            { id: 31, term: "Supernova", definition: "Explosive death of a massive star creating heavy elements and a stellar remnant.", difficulty: "medium" },
+            { id: 32, term: "H–R Diagram", definition: "Plot of luminosity vs temperature; shows main sequence, giants/supergiants, and white dwarfs.", difficulty: "hard" },
+            { id: 33, term: "Black Hole", definition: "Collapsed core of a massive star; gravity so strong that light cannot escape.", difficulty: "hard" },
+            { id: 34, term: "Spiral Galaxy", definition: "Disk-shaped galaxies with spiral arms, star formation, and gas/dust (Milky Way type).", difficulty: "medium" },
+            { id: 35, term: "Elliptical Galaxy", definition: "Round/oval galaxies with mostly old stars and little gas/dust.", difficulty: "medium" },
 
             // ASTRONOMY: EXPANSION & BIG BANG
-            { id: 36, term: "Big Bang Theory", definition: "The universe began hot and dense and has been expanding ever since." },
-            { id: 37, term: "Hubble’s Law", definition: "Galaxy recession speed proportional to distance: v = H₀ d." },
-            { id: 38, term: "Cosmic Microwave Background", definition: "Leftover faint radiation from the early hot universe, observed everywhere." },
-            { id: 39, term: "Redshift / Blueshift", definition: "Redshift = longer wavelength (moving away). Blueshift = shorter wavelength (moving toward)." },
-            { id: 40, term: "Light-year", definition: "Distance light travels in one year; used for cosmic distances." }
+            { id: 36, term: "Big Bang Theory", definition: "The universe began hot and dense and has been expanding ever since.", difficulty: "hard" },
+            { id: 37, term: "Hubble’s Law", definition: "Galaxy recession speed proportional to distance: v = H₀ d.", difficulty: "medium" },
+            { id: 38, term: "Cosmic Microwave Background", definition: "Leftover faint radiation from the early hot universe, observed everywhere.", difficulty: "hard" },
+            { id: 39, term: "Redshift / Blueshift", definition: "Redshift = longer wavelength (moving away). Blueshift = shorter wavelength (moving toward).", difficulty: "medium" },
+            { id: 40, term: "Light-year", definition: "Distance light travels in one year; used for cosmic distances.", difficulty: "easy" }
           ];
 
           // ==========================
