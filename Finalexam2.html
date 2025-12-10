@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Study Buddy – Major Concepts Review (Physics, Earth Sci, Astronomy)</title>
+    <style>
+      :root { color-scheme: dark; }
+
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+        background: #020617;
+        color: #e5e7eb;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+        margin: 0;
+        padding: 24px;
+      }
+
+      h1 { margin-top: 8px; margin-bottom: 4px; font-size: 1.9rem; text-align: center; }
+      p.subtitle { margin-top: 0; margin-bottom: 10px; color: #9ca3af; text-align: center; font-size: 0.95rem; }
+
+      .app-shell { width: 100%; max-width: 860px; }
+      .top-row {
+        display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+        gap: 8px; margin-bottom: 8px;
+      }
+      .deck-label { font-size: 0.85rem; color: #9ca3af; }
+      .pill {
+        display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
+        border-radius: 999px; border: 1px solid #1f2937; background: #020617;
+        font-size: 0.8rem; color: #9ca3af;
+      }
+      .pill strong { color: #e5e7eb; }
+
+      .mode-switch {
+        display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; justify-content: center;
+      }
+      .mode-button {
+        border-radius: 999px; border: 1px solid #374151; padding: 6px 14px; font-size: 0.85rem;
+        cursor: pointer; background: #0b1120; color: #e5e7eb;
+        transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease, border-color 0.1s ease;
+      }
+      .mode-button.mode-active {
+        background: #4f46e5; border-color: #6366f1; box-shadow: 0 8px 24px rgba(79, 70, 229, 0.35);
+      }
+      .mode-button:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0,0,0,0.45); }
+
+      .filter-row {
+        display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 6px;
+      }
+      .filter-button {
+        border-radius: 999px; border: 1px solid #374151; padding: 4px 10px; font-size: 0.78rem;
+        cursor: pointer; background: #020617; color: #9ca3af; transition: background 0.15s ease, border-color 0.1s ease;
+      }
+      .filter-button.filter-active { background: #0369a1; color: #e5e7eb; border-color: #0ea5e9; }
+      .filter-note { text-align: center; font-size: 0.78rem; color: #6b7280; margin-bottom: 6px; }
+
+      .mode { width: 100%; }
+      .hidden { display: none; }
+
+      .card, .quiz-card {
+        background: #020617; border-radius: 18px; box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+        border: 1px solid #1f2937; margin: 16px auto; max-width: 640px;
+      }
+      .card {
+        padding: 24px 28px; cursor: pointer;
+        transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+      }
+      .card:hover { transform: translateY(-2px); box-shadow: 0 22px 50px rgba(0,0,0,0.6); background: #02041b; }
+      .quiz-card { padding: 22px 24px; }
+
+      .card-label {
+        text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.7rem; color: #6366f1; margin-bottom: 6px;
+      }
+      .card-content { font-size: 1.1rem; line-height: 1.5; white-space: pre-wrap; }
+      .card-hint { margin-top: 8px; font-size: 0.8rem; color: #6b7280; }
+
+      .controls {
+        display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 6px; margin-bottom: 10px;
+      }
+      button {
+        border-radius: 999px; border: 1px solid #374151; padding: 8px 16px; font-size: 0.9rem; cursor: pointer;
+        background: #111827; color: #e5e7eb;
+        transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
+      }
+      button.primary { background: #4f46e5; border-color: #6366f1; }
+      button.good { background: #16a34a; border-color: #22c55e; }
+      button.bad { background: #b91c1c; border-color: #ef4444; }
+      button.subtle { background: #020617; border-color: #1f2937; font-size: 0.8rem; padding: 5px 12px; }
+      button:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(0,0,0,0.4); }
+      button:active { transform: translateY(0); box-shadow: none; }
+
+      .stats { margin-top: 6px; font-size: 0.85rem; color: #9ca3af; text-align: center; }
+      .stats span { margin: 0 6px; }
+
+      .tagline { margin-top: 18px; font-size: 0.78rem; color: #6b7280; text-align: center; }
+      .tagline kbd {
+        background: #020617; border-radius: 4px; padding: 1px 4px; border: 1px solid #1f2937; font-size: 0.7rem;
+      }
+
+      /* Matching */
+      .matching-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 0.9rem; }
+      .matching-term {
+        flex: 0 0 38%; padding: 6px 10px; background: #020617; border-radius: 10px; border: 1px solid #111827;
+      }
+      .matching-select {
+        flex: 1; padding: 6px 8px; border-radius: 999px; border: 1px solid #374151;
+        background: #020617; color: #e5e7eb; font-size: 0.85rem;
+      }
+      .matching-select.correct { border-color: #22c55e; box-shadow: 0 0 0 1px #22c55e; }
+      .matching-select.incorrect { border-color: #ef4444; box-shadow: 0 0 0 1px #ef4444; }
+
+      /* Quiz */
+      .quiz-question-label {
+        text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.7rem; color: #f97316; margin-bottom: 6px;
+      }
+      .quiz-question-text { font-size: 1rem; line-height: 1.4; margin-bottom: 14px; }
+      .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+      .quiz-option { text-align: left; width: 100%; }
+      .quiz-option.correct { background: #14532d; border-color: #22c55e; }
+      .quiz-option.incorrect { background: #7f1d1d; border-color: #ef4444; }
+      .quiz-feedback { margin-top: 10px; font-size: 0.9rem; }
+      .quiz-feedback.correct { color: #4ade80; }
+      .quiz-feedback.incorrect { color: #fca5a5; }
+
+      @media (max-width: 600px) {
+        body { padding: 16px; }
+        .card, .quiz-card { padding: 18px 20px; }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Study Buddy – Major Concepts Review</h1>
+    <p class="subtitle">Physics • Earth Science • Astronomy</p>
+
+    <div class="app-shell">
+      <div class="top-row">
+        <div class="deck-label">Deck: <strong>Major Concepts – Final Review</strong></div>
+        <div class="pill">Cards in deck: <strong id="deck-count">0</strong></div>
+      </div>
+
+      <!-- MODE SWITCH -->
+      <div class="mode-switch">
+        <button class="mode-button mode-active" data-mode="flashcards">Flashcards</button>
+        <button class="mode-button" data-mode="matching">Matching</button>
+        <button class="mode-button" data-mode="quiz">Quiz</button>
+      </div>
+
+      <!-- FILTERS -->
+      <div class="filter-row">
+        <button class="filter-button filter-active" data-filter="all">All cards</button>
+        <button class="filter-button" data-filter="unknown">Only “Not yet”</button>
+        <button class="filter-button" data-filter="known">Only “Got it”</button>
+      </div>
+      <div class="filter-note">Filters apply to <strong>all modes</strong>. Progress is saved automatically on this device.</div>
+
+      <!-- FLASHCARDS MODE -->
+      <div id="mode-flashcards" class="mode">
+        <div id="flashcard" class="card">
+          <div class="card-label" id="card-label">Term</div>
+          <div class="card-content" id="card-content"></div>
+          <div class="card-hint" id="card-hint">Click card or press <kbd>Space</kbd> to flip.</div>
+        </div>
+
+        <div class="controls">
+          <button id="prev">◀ Prev</button>
+          <button id="flip" class="primary">Flip</button>
+          <button id="next">Next ▶</button>
+          <button id="shuffle">Shuffle</button>
+        </div>
+
+        <div class="controls">
+          <button id="know" class="good">Got it ✅</button>
+          <button id="dontKnow" class="bad">Not yet ❌</button>
+          <button id="reset" class="subtle">Reset flashcard stats</button>
+        </div>
+
+        <div class="stats" id="stats"></div>
+      </div>
+
+      <!-- MATCHING MODE -->
+      <div id="mode-matching" class="mode hidden">
+        <p class="subtitle">
+          Match each <strong>term</strong> on the left with the correct <strong>definition</strong> on the right.
+        </p>
+        <div id="matching-container"></div>
+        <div class="controls">
+          <button id="matching-new" class="primary">New round</button>
+          <button id="matching-check">Check answers</button>
+        </div>
+        <div class="stats" id="matching-result"></div>
+      </div>
+
+      <!-- QUIZ MODE -->
+      <div id="mode-quiz" class="mode hidden">
+        <p class="subtitle">Multiple-choice: pick the correct <strong>term</strong> for each definition.</p>
+
+        <div class="quiz-card">
+          <div class="quiz-question-label" id="quiz-round-label">Question</div>
+          <div class="quiz-question-text" id="quiz-question"></div>
+          <div class="quiz-options" id="quiz-options"></div>
+          <div class="quiz-feedback" id="quiz-feedback"></div>
+        </div>
+
+        <div class="controls">
+          <button id="quiz-next" class="primary">Next question</button>
+          <button id="quiz-retry" class="subtle">Retry missed questions</button>
+          <button id="quiz-reset" class="subtle">Reset quiz stats</button>
+        </div>
+        <div class="stats" id="quiz-stats"></div>
+      </div>
+
+      <p class="tagline">
+        Flashcards shortcuts: <kbd>←</kbd>/<kbd>→</kbd> prev/next, <kbd>Space</kbd> flip, <kbd>1</kbd> Got it, <kbd>2</kbd> Not yet.
+      </p>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        (function () {
+          const flashcards = [
+            // PHYSICS, EARTH SCIENCE, ASTRONOMY content will go here
+          ];
+
+          document.getElementById("deck-count").textContent = flashcards.length;
+
+          const STORAGE_KEY = "studyBuddyMajorConceptsProgress_v1";
+          const progress = loadProgress();
+
+          function loadProgress() {
+            try {
+              const raw = localStorage.getItem(STORAGE_KEY);
+              if (!raw) return {};
+              return JSON.parse(raw) || {};
+            } catch {
+              return {};
+            }
+          }
+
+          function saveProgress() {
+            try {
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+            } catch {
+              /* ignore */
+            }
+          }
+
+          function getCardStatus(id) {
+            if (progress[id] && progress[id].status === "known") return "known";
+            return "unknown";
+          }
+
+          function setCardStatus(id, status) {
+            progress[id] = { status };
+            saveProgress();
+            updateActiveDeck();
+          }
+
+          // Rest of the app logic (modes, flashcards, quiz handling, etc.) will go here.
+
+        })();
+      });
+    </script>
+  </body>
+</html>
